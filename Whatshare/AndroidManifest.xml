@@ -62,7 +62,8 @@
         </activity>
         
         <activity
-            android:name="it.mb.whatshare.SendToGCMActivity"
+            android:name=".SendToGCMActivity"
+            android:theme="@android:style/Theme.NoDisplay"
             android:clearTaskOnLaunch="true"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"
