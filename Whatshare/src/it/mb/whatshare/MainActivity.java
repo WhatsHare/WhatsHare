@@ -346,7 +346,7 @@ public class MainActivity extends Activity {
     protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
         // app was started through launcher
-        inflateLayout();
+        updateLayout();
     }
 
     /*
@@ -398,7 +398,7 @@ public class MainActivity extends Activity {
         return super.onContextItemSelected(item);
     }
 
-    private void inflateLayout() {
+    private void updateLayout() {
         if (outboundDevice == null) {
             try {
                 Pair<PairedDevice, String> paired = SendToGCMActivity
@@ -418,8 +418,6 @@ public class MainActivity extends Activity {
         if (!isWhatsappInstalled(this) && outboundDevice == null) {
             showServerConfiguration();
         } else {
-            View menu = getLayoutInflater().inflate(R.layout.menu, null);
-            setContentView(menu);
             if (outboundDevice != null)
                 ((TextView) findViewById(R.id.outbound_device))
                         .setText(outboundDevice.type);
@@ -537,6 +535,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         // start the registration process if needed
         GCMIntentService.registerWithGCM(this);
+        View menu = getLayoutInflater().inflate(R.layout.menu, null);
+        setContentView(menu);
         onNewIntent(getIntent());
     }
 
