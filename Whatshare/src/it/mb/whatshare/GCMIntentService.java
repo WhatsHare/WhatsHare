@@ -99,8 +99,7 @@ public class GCMIntentService extends GCMBaseIntentService {
      */
     @Override
     protected void onError(Context arg0, String arg1) {
-        // TODO Auto-generated method stub
-
+        // ahem...
     }
 
     /*
@@ -125,9 +124,9 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onMessage(Context arg0, Intent arg1) {
         Bundle bundle = arg1.getExtras();
-        Utils.debug("new incoming message from %s", bundle.getString("sender"));
         generateNotification(arg0, bundle.getString("message"));
-
+        Utils.debug("new incoming message from %s: %s",
+                bundle.getString("sender"), bundle.getString("message"));
     }
 
     /**
@@ -141,16 +140,20 @@ public class GCMIntentService extends GCMBaseIntentService {
      */
     @SuppressWarnings("deprecation")
     public void generateNotification(Context context, String message) {
+        // @formatter:off
         String title = context.getString(R.string.app_name);
+        // setAction is called so filterEquals() always returns false for all
+        // our intents
         Intent whatshareIntent = new Intent(context,
-                SendToWhatsappActivity.class);
-        whatshareIntent.putExtra("message", message);
+                SendToWhatsappActivity.class)
+                .putExtra("message", message)
+                .setAction(String.valueOf(System.currentTimeMillis()))
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        
         PendingIntent intent = PendingIntent.getActivity(context, 0,
                 whatshareIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
-        whatshareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        // | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        
         Notification notification = null;
-        // @formatter:off
         Notification.Builder builder = new Notification.Builder(context)
                 .setSmallIcon(R.drawable.notification_icon, 0)
                 .setContentTitle(title)
@@ -158,12 +161,14 @@ public class GCMIntentService extends GCMBaseIntentService {
                 .setContentIntent(intent)
                 .setDefaults(Notification.DEFAULT_ALL);
         // @formatter:on
+
         if (Build.VERSION.SDK_INT > 15) {
             notification = buildForJellyBean(builder);
         } else {
             notification = builder.getNotification();
         }
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
         ((NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE)).notify(
                 counter.incrementAndGet(), notification);

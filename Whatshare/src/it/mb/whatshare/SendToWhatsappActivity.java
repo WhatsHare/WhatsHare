@@ -33,6 +33,7 @@ public class SendToWhatsappActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Utils.debug("SendToWhatsappActivity.onNewIntent()");
         if (intent != null) {
             if (intent.getExtras() != null) {
                 String message = intent.getStringExtra("message");
