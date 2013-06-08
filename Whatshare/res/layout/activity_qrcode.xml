@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".QRCodeActivity" >
+
+    <ImageView
+        android:id="@+id/qr_code"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/inputCode"
+        android:layout_below="@+id/qr_instructions"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/qr_desc" />
+
+    <EditText
+        android:id="@+id/inputCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/submit_code"
+        android:inputType="text"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:hint="@string/qr_input_hint" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/qr_instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="@string/new_outbound_instructions_first_time"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/submit_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/qr_input_submit"
+        android:onClick="onSubmitPressed" />
+
+</RelativeLayout>
