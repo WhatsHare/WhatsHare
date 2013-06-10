@@ -46,6 +46,7 @@
         android:text="@string/no_device" />
 
     <RelativeLayout
+        android:id="@+id/inbound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
@@ -82,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:tag="inboundDevicesFragment"
+        android:id="@+id/inboundDevices"
         tools:layout="@layout/inbound_devices_fragment" />
 
 </LinearLayout>

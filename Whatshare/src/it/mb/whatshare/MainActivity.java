@@ -473,13 +473,13 @@ public class MainActivity extends Activity {
         } else {
             TextView outboundView = (TextView) findViewById(R.id.outbound_device);
             if (outboundDevice != null) {
-                outboundView.setText(outboundDevice.name);
+                outboundView.setText(outboundDevice.type);
             } else {
                 outboundView.setText(R.string.no_device);
             }
             if (!isWhatsappInstalled(this)) {
                 // no inbound device can ever be configured
-                int[] toRemove = { R.id.textView1, android.R.id.list };
+                int[] toRemove = { R.id.inbound, R.id.inboundDevices };
                 for (int item : toRemove) {
                     View view = findViewById(item);
                     ((ViewGroup) view.getParent()).removeView(view);
@@ -543,7 +543,7 @@ public class MainActivity extends Activity {
     }
 
     private void showServerConfiguration() {
-        Intent i = new Intent(this, PairNoWhatsappActivity.class);
+        Intent i = new Intent(this, PairInboundActivity.class);
         startActivity(i);
     }
 

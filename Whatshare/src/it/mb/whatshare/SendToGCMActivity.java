@@ -55,7 +55,7 @@ public class SendToGCMActivity extends Activity {
         @Override
         protected Void doInBackground(String... params) {
             String text = params[0];
-            String assignedID = PairNoWhatsappActivity
+            String assignedID = PairInboundActivity
                     .getAssignedID(SendToGCMActivity.this);
             HttpPost post = new HttpPost(GCM_URL);
             try {
@@ -208,7 +208,7 @@ public class SendToGCMActivity extends Activity {
                             public void onClick(DialogInterface dialog,
                                     int which) {
                                 Intent i = new Intent(SendToGCMActivity.this,
-                                        PairNoWhatsappActivity.class);
+                                        PairInboundActivity.class);
                                 startActivity(i);
                             }
                         });

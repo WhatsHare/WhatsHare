@@ -67,7 +67,7 @@ import com.google.zxing.common.BitMatrix;
  * @author Michele Bonazza
  * 
  */
-public class PairNoWhatsappActivity extends Activity {
+public class PairInboundActivity extends Activity {
 
     /**
      * An asynchronous task to call Google's URL shortener service.
@@ -87,7 +87,7 @@ public class PairNoWhatsappActivity extends Activity {
          */
         @Override
         protected void onPreExecute() {
-            dialog = ProgressDialog.show(PairNoWhatsappActivity.this,
+            dialog = ProgressDialog.show(PairInboundActivity.this,
                     getResources().getString(R.string.please_wait),
                     getResources().getString(R.string.wait_message));
         }
@@ -138,7 +138,7 @@ public class PairNoWhatsappActivity extends Activity {
                         return new Pair<PairedDevice, String>(
                                 new PairedDevice(decodeId(id),
                                         URLDecoder.decode(model, "UTF-8")),
-                                assignedID);
+                                decodeId(assignedID));
                     } else {
                         Utils.debug("Checksum bad");
                     }
@@ -185,7 +185,7 @@ public class PairNoWhatsappActivity extends Activity {
             return new DialogFragment() {
                 public Dialog onCreateDialog(Bundle savedInstanceState) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(
-                            PairNoWhatsappActivity.this);
+                            PairInboundActivity.this);
                     try {
                         builder.setMessage(getString(R.string.failed_pairing));
                         if (device != null) {
