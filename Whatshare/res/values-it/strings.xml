@@ -179,4 +179,5 @@
         <item quantity="one"></item>
         <item quantity="other">\ (%d associati in totale)</item>
     </plurals>
+    <string name="add_device">Aggiungi nuovo dispositivo</string>
 </resources>

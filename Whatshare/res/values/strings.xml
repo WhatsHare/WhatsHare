@@ -49,4 +49,5 @@
         <item quantity="one"></item>
         <item quantity="other">\ (%d paired total)</item>
     </plurals>
+    <string name="add_device">Add new device</string>
 </resources>

@@ -114,6 +114,41 @@ public class MainActivity extends Activity {
             return new StringBuilder(name).append(", type(").append(type)
                     .append(")").toString();
         }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((name == null) ? 0 : name.hashCode());
+            return result;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            PairedDevice other = (PairedDevice) obj;
+            if (name == null) {
+                if (other.name != null)
+                    return false;
+            } else if (!name.equals(other.name))
+                return false;
+            return true;
+        }
     }
 
     /**
@@ -383,20 +418,17 @@ public class MainActivity extends Activity {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(
                         MainActivity.this);
-                builder.setMessage(String.format(
-                        getResources().getString(
-                                R.string.remove_inbound_paired_message),
-                        deviceToBeUnpaired.type));
+                builder.setMessage(getResources().getString(
+                        R.string.remove_inbound_paired_message,
+                        deviceToBeUnpaired.name));
                 builder.setPositiveButton(android.R.string.ok,
                         new OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialog,
                                     int which) {
-                                Toast.makeText(
-                                        getApplicationContext(),
-                                        "rimuoverei " + deviceToBeUnpaired.name,
-                                        Toast.LENGTH_LONG).show();
+                                removePaired(deviceToBeUnpaired);
+                                deviceToBeUnpaired = null;
                             }
                         });
                 return builder.create();
@@ -404,6 +436,19 @@ public class MainActivity extends Activity {
         }.show(getFragmentManager(), "lol");
 
         return super.onContextItemSelected(item);
+    }
+
+    private void removePaired(PairedDevice device) {
+        Utils.debug("removing %s... success? %s", device.name,
+                inboundDevices.remove(device));
+        try {
+            writePairedInboundFile(inboundDevices);
+        } catch (IOException e) {
+            // TODO should notify the user
+            e.printStackTrace();
+        }
+        BaseAdapter listAdapter = getListAdapter();
+        listAdapter.notifyDataSetChanged();
     }
 
     private void updateLayout() {
@@ -426,9 +471,12 @@ public class MainActivity extends Activity {
         if (!isWhatsappInstalled(this) && outboundDevice == null) {
             showServerConfiguration();
         } else {
-            if (outboundDevice != null)
-                ((TextView) findViewById(R.id.outbound_device))
-                        .setText(outboundDevice.type);
+            TextView outboundView = (TextView) findViewById(R.id.outbound_device);
+            if (outboundDevice != null) {
+                outboundView.setText(outboundDevice.name);
+            } else {
+                outboundView.setText(R.string.no_device);
+            }
             if (!isWhatsappInstalled(this)) {
                 // no inbound device can ever be configured
                 int[] toRemove = { R.id.textView1, android.R.id.list };
@@ -440,6 +488,26 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * Called when the add new inbound device button is pressed.
+     * 
+     * @param v
+     *            the button
+     */
+    public void onAddInboundClicked(View v) {
+        onNewInboundDevicePressed();
+    }
+
+    /**
+     * Called when the add new outbound device button is pressed.
+     * 
+     * @param v
+     *            the button
+     */
+    public void onAddOutboundClicked(View v) {
+        onNewOutboundDevicePressed();
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -448,12 +516,6 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_pair_new_outbound:
-            onNewOutboundDevicePressed();
-            break;
-        case R.id.menu_pair_new_inbound:
-            onNewInboundDevicePressed();
-            break;
         case R.id.menu_delete_saved_inbound:
             onDeleteSavedInboundPressed();
             break;
@@ -470,21 +532,6 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_main, menu);
-        return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        if (!isWhatsappInstalled(this)) {
-            // no inbound device can ever be configured
-            menu.removeItem(R.id.menu_pair_new_inbound);
-        }
         return true;
     }
 

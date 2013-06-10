@@ -5,37 +5,84 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/paired_outbound"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="24dp" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:text="@string/paired_outbound"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <ImageButton
+            android:id="@+id/add_outbound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginLeft="24dp"
+            android:background="@drawable/add_button"
+            android:baselineAlignBottom="false"
+            android:contentDescription="@string/add_device"
+            android:onClick="onAddOutboundClicked"
+            android:src="@drawable/content_new" />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/outbound_device"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
-        android:text="@string/no_device"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_marginTop="12dp"
+        android:text="@string/no_device" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
-        android:layout_marginTop="12dp"
-        android:text="@string/paired_inbound"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="24dp" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:text="@string/paired_inbound"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <ImageButton
+            android:id="@+id/add_inbound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="24dp"
+            android:background="@drawable/add_button"
+            android:contentDescription="@string/add_device"
+            android:gravity="right"
+            android:onClick="onAddInboundClicked"
+            android:src="@drawable/content_new" />
+
+    </RelativeLayout>
 
     <fragment
-        android:tag="inboundDevicesFragment"
         android:name="it.mb.whatshare.MainActivity$InboundDevicesList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:tag="inboundDevicesFragment"
         tools:layout="@layout/inbound_devices_fragment" />
 
 </LinearLayout>

@@ -109,7 +109,9 @@ public class GCMIntentService extends GCMBaseIntentService {
     private void readWhitelist() {
         File whitelist = new File(getFilesDir(),
                 MainActivity.INBOUND_DEVICES_FILENAME);
-        long lastModified = whitelist.lastModified();
+        // if whitelist doesn't exist, don't bother
+        long lastModified = whitelist.exists() ? whitelist.lastModified()
+                : Long.MIN_VALUE;
         if (lastCheckedWhitelist < lastModified) {
             FileInputStream fis = null;
             try {
