@@ -4,6 +4,18 @@
  */
 package it.mb.whatshare;
 
+import it.mb.whatshare.MainActivity.PairedDevice;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.StreamCorruptedException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -44,6 +56,10 @@ public class GCMIntentService extends GCMBaseIntentService {
     private static AtomicInteger counter = new AtomicInteger();
 
     private static String registrationID = "";
+
+    private Set<String> senderWhitelist = new HashSet<String>();
+
+    private long lastCheckedWhitelist;
 
     /**
      * Creates a new intent service for the application.
@@ -90,6 +106,45 @@ public class GCMIntentService extends GCMBaseIntentService {
         return registrationID;
     }
 
+    private void readWhitelist() {
+        File whitelist = new File(getFilesDir(),
+                MainActivity.INBOUND_DEVICES_FILENAME);
+        long lastModified = whitelist.lastModified();
+        if (lastCheckedWhitelist < lastModified) {
+            FileInputStream fis = null;
+            try {
+                fis = openFileInput(MainActivity.INBOUND_DEVICES_FILENAME);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                Object read = ois.readObject();
+                @SuppressWarnings("unchecked")
+                List<PairedDevice> devices = (ArrayList<PairedDevice>) read;
+                senderWhitelist = new HashSet<String>();
+                for (PairedDevice device : devices) {
+                    senderWhitelist.add(String.valueOf(device.name.hashCode()));
+                }
+            } catch (FileNotFoundException e) {
+                // it's ok, no whitelist, all messages are rejected
+            } catch (StreamCorruptedException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                // TODO here the error should be notified I guess
+                e.printStackTrace();
+            } finally {
+                if (fis != null)
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        // can't do much...
+                        e.printStackTrace();
+                    }
+            }
+            // whatever happens, don't keep checking for nothing
+            lastCheckedWhitelist = lastModified;
+        }
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -124,9 +179,13 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onMessage(Context arg0, Intent arg1) {
         Bundle bundle = arg1.getExtras();
-        generateNotification(arg0, bundle.getString("message"));
-        Utils.debug("new incoming message from %s: %s",
-                bundle.getString("sender"), bundle.getString("message"));
+        String sender = bundle.getString("sender");
+        Utils.debug("new incoming message from %s: %s", sender,
+                bundle.getString("message"));
+        readWhitelist();
+        if (senderWhitelist.contains(sender)) {
+            generateNotification(arg0, bundle.getString("message"));
+        }
     }
 
     /**

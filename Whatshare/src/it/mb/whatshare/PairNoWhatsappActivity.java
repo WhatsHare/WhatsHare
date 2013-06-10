@@ -269,10 +269,10 @@ public class PairNoWhatsappActivity extends Activity {
      */
     @Override
     protected void onNewIntent(Intent intent) {
-        showServerActivity();
+        showPairingLayout();
     }
 
-    private void showServerActivity() {
+    private void showPairingLayout() {
         View view = getLayoutInflater().inflate(R.layout.activity_qrcode, null);
         setContentView(view);
         String paired = getOutboundPaired();

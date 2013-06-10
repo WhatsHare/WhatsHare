@@ -35,6 +35,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -69,9 +70,9 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
     /**
-     * 
+     * The file name of the list containing all inbound devices.
      */
-    private static final String INBOUND_DEVICES_FILENAME = "inbound";
+    public static final String INBOUND_DEVICES_FILENAME = "inbound";
 
     /**
      * A device paired with this one to share stuff on whatsapp.
@@ -110,7 +111,8 @@ public class MainActivity extends Activity {
         }
 
         public String toString() {
-            return type + ", type: " + name;
+            return new StringBuilder(name).append(", type(").append(type)
+                    .append(")").toString();
         }
     }
 
@@ -203,12 +205,10 @@ public class MainActivity extends Activity {
         @Override
         protected Void doInBackground(int[]... params) {
             registrationID = GCMIntentService.getRegistrationID();
-            Utils.debug(
-                    "about to encrypt reg id (%s) and assigned id for paired device (%s)...",
-                    registrationID, deviceToBePaired.name);
             String encodedID = encrypt(params[0], registrationID.toCharArray());
             String encodedAssignedID = encrypt(params[0],
-                    deviceToBePaired.name.toCharArray());
+                    String.valueOf(deviceToBePaired.name.hashCode())
+                            .toCharArray());
             Utils.debug(
                     "shortening, this device's encodedID is %s, paired devices's"
                             + " encodedAssignedID is %s", encodedID,
@@ -282,12 +282,20 @@ public class MainActivity extends Activity {
                                             adapter.notifyDataSetChanged();
                                         }
                                     });
-                                    Toast.makeText(
-                                            getActivity(),
-                                            String.format(
-                                                    "Device added (%d paired)",
-                                                    adapter.getCount()),
-                                            Toast.LENGTH_LONG).show();
+                                    if (googl != null) {
+                                        Resources res = getResources();
+                                        String howManyTotal = res
+                                                .getQuantityString(
+                                                        R.plurals.added_device,
+                                                        adapter.getCount(),
+                                                        adapter.getCount());
+                                        Toast.makeText(
+                                                getActivity(),
+                                                res.getString(
+                                                        R.string.device_paired,
+                                                        howManyTotal),
+                                                Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                     return builder.create();
@@ -635,16 +643,18 @@ public class MainActivity extends Activity {
                         String deviceId = input.getText().toString();
                         if (!Pattern.matches(VALID_DEVICE_ID, deviceId)) {
                             if (deviceId.length() < 1) {
-                                input.setError("must be at least 1 character long");
+                                input.setError(getResources().getString(
+                                        R.string.at_least_one_char));
                             } else {
-                                input.setError("letters, numbers, '-', '_' or whitespaces only");
+                                input.setError(getResources().getString(
+                                        R.string.wrong_char));
                             }
-                            Utils.debug("lol");
                         } else if (!isValidChoice(deviceId)) {
-                            input.setError("ID already in use");
+                            input.setError(getResources().getString(
+                                    R.string.id_already_in_use));
                         } else {
-                            deviceToBePaired = new PairedDevice(deviceId
-                                    .replaceAll(" ", "_"), deviceName);
+                            deviceToBePaired = new PairedDevice(deviceId,
+                                    deviceName);
                             new CallGooGl().execute(sharedSecret);
                             ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
                                     .hideSoftInputFromWindow(
@@ -659,8 +669,9 @@ public class MainActivity extends Activity {
     }
 
     private boolean isValidChoice(String deviceID) {
+        int hashed = deviceID.hashCode();
         for (PairedDevice device : inboundDevices) {
-            if (device.name.equalsIgnoreCase(deviceID)) {
+            if (hashed == device.name.hashCode()) {
                 return false;
             }
         }
@@ -755,7 +766,7 @@ public class MainActivity extends Activity {
                 inboundDevices = loadInboundPairing();
                 if (inboundDevices == null)
                     inboundDevices = new ArrayList<PairedDevice>();
-                Utils.debug("%d devices", inboundDevices.size());
+                Utils.debug("%d device(s)", inboundDevices.size());
                 for (PairedDevice device : inboundDevices) {
                     deviceNames.add(device.name);
                 }

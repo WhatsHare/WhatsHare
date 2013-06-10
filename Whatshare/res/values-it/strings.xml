@@ -171,4 +171,12 @@
     <string name="unpair">Disassocia</string>
     <string name="remove_inbound_paired_message">Disassociare %1$s?\n\nWhatshare ignorerà tutti i messaggi provenienti da %1$s</string>
     <string name="delete_file_saved_inbound">Rimuovi tutti i dispositivi in ingresso associati</string>
+    <string name="at_least_one_char">almeno 1 carattere</string>
+    <string name="wrong_char">solo lettere, numeri, \'-\', \'_\' o spazi</string>
+    <string name="id_already_in_use">ID già in uso</string>
+    <string name="device_paired">Dispositivo aggiunto%s</string>
+    <plurals name="added_device">
+        <item quantity="one"></item>
+        <item quantity="other">\ (%d associati in totale)</item>
+    </plurals>
 </resources>
