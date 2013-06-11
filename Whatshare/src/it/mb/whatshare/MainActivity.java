@@ -760,6 +760,7 @@ public class MainActivity extends Activity {
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText(deviceName);
+        input.setSelection(deviceName.length());
         // @formatter:off
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
             .setTitle(R.string.device_id_chooser_title)
