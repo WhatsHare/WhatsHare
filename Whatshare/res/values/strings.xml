@@ -23,7 +23,7 @@
     <string name="qr_desc">A pairing QR code</string>
     <string name="invalidshorturl">Code must be 5 characters/digits</string>
     <string name="successful_pairing">%1$s has been successfully paired!\n\nYou can now use WhatsHare to share content from your %1$s through Whatsapp!</string>
-    <string name="failed_pairing">Couldn\'t pair devices, try to take another picture of the QR code!</string>
+    <string name="failed_pairing">Couldn\'t pair devices, try to take another picture of the QR code in a few seconds!</string>
     <string name="paired_inbound">Receiving content from</string>
     <string name="paired_outbound">Sending content to</string>
     <string name="no_device">No device</string>

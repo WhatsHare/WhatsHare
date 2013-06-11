@@ -545,6 +545,19 @@ public class MainActivity extends Activity {
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.menu_delete_saved_inbound).setVisible(
+                isWhatsappInstalled(this));
+        return true;
+    }
+
     private void showRemoveOutboundDialog() {
         new RetainedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -758,53 +771,66 @@ public class MainActivity extends Activity {
 
     private void promptUserForID(final String deviceName,
             final int[] sharedSecret) {
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setText(deviceName);
-        input.setSelection(deviceName.length());
-        // @formatter:off
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-            .setTitle(R.string.device_id_chooser_title)
-            .setView(input)
-            .setPositiveButton(android.R.string.ok, null);
-        // @formatter:on
-        final AlertDialog alertDialog = builder.create();
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        DialogFragment prompt = new RetainedDialogFragment() {
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                final EditText input = new EditText(MainActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setText(deviceName);
+                input.setSelection(deviceName.length());
+                // @formatter:off
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.device_id_chooser_title)
+                        .setView(input)
+                        .setPositiveButton(android.R.string.ok, null);
+                    // @formatter:on
+                final AlertDialog alertDialog = builder.create();
+                alertDialog
+                        .setOnShowListener(new DialogInterface.OnShowListener() {
 
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                b.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+                                Button b = alertDialog
+                                        .getButton(AlertDialog.BUTTON_POSITIVE);
+                                b.setOnClickListener(new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View view) {
-                        input.setError(null);
-                        String deviceId = input.getText().toString();
-                        if (!Pattern.matches(VALID_DEVICE_ID, deviceId)) {
-                            if (deviceId.length() < 1) {
-                                input.setError(getResources().getString(
-                                        R.string.at_least_one_char));
-                            } else {
-                                input.setError(getResources().getString(
-                                        R.string.wrong_char));
+                                    @Override
+                                    public void onClick(View view) {
+                                        input.setError(null);
+                                        String deviceId = input.getText()
+                                                .toString();
+                                        if (!Pattern.matches(VALID_DEVICE_ID,
+                                                deviceId)) {
+                                            if (deviceId.length() < 1) {
+                                                input.setError(getResources()
+                                                        .getString(
+                                                                R.string.at_least_one_char));
+                                            } else {
+                                                input.setError(getResources()
+                                                        .getString(
+                                                                R.string.wrong_char));
+                                            }
+                                        } else if (!isValidChoice(deviceId)) {
+                                            input.setError(getResources()
+                                                    .getString(
+                                                            R.string.id_already_in_use));
+                                        } else {
+                                            deviceToBePaired = new PairedDevice(
+                                                    deviceId, deviceName);
+                                            new CallGooGl()
+                                                    .execute(sharedSecret);
+                                            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+                                                    input.getWindowToken(), 0);
+                                            alertDialog.dismiss();
+                                        }
+                                    }
+                                });
                             }
-                        } else if (!isValidChoice(deviceId)) {
-                            input.setError(getResources().getString(
-                                    R.string.id_already_in_use));
-                        } else {
-                            deviceToBePaired = new PairedDevice(deviceId,
-                                    deviceName);
-                            new CallGooGl().execute(sharedSecret);
-                            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-                                    .hideSoftInputFromWindow(
-                                            input.getWindowToken(), 0);
-                            alertDialog.dismiss();
-                        }
-                    }
-                });
+                        });
+                return alertDialog;
             }
-        });
-        alertDialog.show();
+        };
+
+        prompt.show(getFragmentManager(), "chooseName");
     }
 
     private boolean isValidChoice(String deviceID) {

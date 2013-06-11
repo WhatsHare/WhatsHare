@@ -2,7 +2,7 @@
     
     <item
         android:id="@+id/menu_delete_saved_inbound"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:showAsAction="never"
         android:title="@string/delete_file_saved_inbound" />
 

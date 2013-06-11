@@ -145,7 +145,7 @@
     <string name="wait_registration">Registro l\'applicazione per il primo utilizzo&#8230;</string>
     <string name="wait_message">Generazione dell\'ID per la registrazione del dispositivo in corso&#8230;</string>
     <string name="code_dialog">Inserisci questo codice nel campo di testo della pagina di configurazione dell\'estensione per Chrome:\n\n%1$s\n\nFa\' attenzione alle maiuscole/minuscole!</string>
-    <string name="code_dialog_fail">Impossibile generare un ID per questo dispositivo utilizzando il QR code fotografato.\n\nAggiorna la pagina di configurazione dell\'estensione per Chrome e prova ancora!</string>
+    <string name="code_dialog_fail">Impossibile generare un ID per questo dispositivo utilizzando il QR code fotografato.\n\nAspetta qualche secondo e riprova!</string>
     <string name="whatsapp_not_installed_title">Whatsapp non è installato</string>
     <string name="whatsapp_not_installed">Per inviare messaggi via Whatsapp è necessario aver installato Whatsapp!</string>
     <string name="whatsapp_not_installed_dont_mind">Capito, non ricordarmelo più</string>
