@@ -23,7 +23,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -196,7 +195,7 @@ public class SendToGCMActivity extends Activity {
     }
 
     private void showNoPairedDeviceDialog() {
-        new DialogFragment() {
+        new RetainedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(
                         SendToGCMActivity.this);

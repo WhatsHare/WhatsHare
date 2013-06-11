@@ -291,7 +291,7 @@ public class MainActivity extends Activity {
         }
 
         private DialogFragment getCodeDialog(final String googl) {
-            return new DialogFragment() {
+            return new RetainedDialogFragment() {
                 public Dialog onCreateDialog(Bundle savedInstanceState) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(
                             MainActivity.this);
@@ -414,7 +414,7 @@ public class MainActivity extends Activity {
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        new DialogFragment() {
+        new RetainedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(
                         MainActivity.this);
@@ -551,7 +551,7 @@ public class MainActivity extends Activity {
      * Called when the pair new device menu item (inbound) is pressed.
      */
     public void onNewInboundDevicePressed() {
-        DialogFragment dialog = new DialogFragment() {
+        DialogFragment dialog = new RetainedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(
                         MainActivity.this);
@@ -643,7 +643,7 @@ public class MainActivity extends Activity {
                     }
                     promptUserForID(deviceName.toString(), sharedSecret);
                 } catch (NumberFormatException e) {
-                    DialogFragment failDialog = new DialogFragment() {
+                    DialogFragment failDialog = new RetainedDialogFragment() {
                         public Dialog onCreateDialog(Bundle savedInstanceState) {
                             return new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.qr_code_fail)

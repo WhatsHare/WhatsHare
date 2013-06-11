@@ -182,7 +182,7 @@ public class PairInboundActivity extends Activity {
 
         private DialogFragment getPairedDeviceDialog(
                 final Pair<PairedDevice, String> device) {
-            return new DialogFragment() {
+            return new RetainedDialogFragment() {
                 public Dialog onCreateDialog(Bundle savedInstanceState) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(
                             PairInboundActivity.this);
