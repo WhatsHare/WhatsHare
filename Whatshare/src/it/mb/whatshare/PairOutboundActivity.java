@@ -212,7 +212,10 @@ public class PairOutboundActivity extends Activity {
                                 @Override
                                 public void onClick(DialogInterface dialog,
                                         int which) {
-                                    onNewIntent(getIntent());
+                                    // back to main screen
+                                    startActivity(new Intent(
+                                            getApplicationContext(),
+                                            MainActivity.class));
                                 }
                             });
                     return builder.create();

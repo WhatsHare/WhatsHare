@@ -80,7 +80,8 @@ public class MainActivity extends Activity {
     /**
      * If set, all network requests are routed to localhost (on port 80) upon
      * failure (to have a log of all requests that failed). An HTTP server must
-     * be running (for instance, echo_server.py in the extras_not_in_apk folder)
+     * be running (for instance, using netcat or the echo_server.py script in
+     * the extras_not_in_apk folder)
      */
     public static final boolean DEBUG_FAILED_REQUESTS = false;
 
