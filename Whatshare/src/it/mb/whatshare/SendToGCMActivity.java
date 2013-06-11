@@ -36,6 +36,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 /**
  * Activity called when sharing content from this device to be sent to the
  * Android device where Whatsapp is installed through GCM.
@@ -131,6 +133,28 @@ public class SendToGCMActivity extends Activity {
                 }
             }.execute();
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onStart()
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onStop()
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
     }
 
     /*

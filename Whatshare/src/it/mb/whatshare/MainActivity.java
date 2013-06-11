@@ -61,6 +61,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 /**
  * The only activity: it can be created when tapping on a notification (and an
  * Intent is routed to this activity, which in turn creates a new Whatsapp
@@ -715,6 +717,28 @@ public class MainActivity extends Activity {
             // not installed
         }
         return installed;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onStart()
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onStop()
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
     }
 
     /*
