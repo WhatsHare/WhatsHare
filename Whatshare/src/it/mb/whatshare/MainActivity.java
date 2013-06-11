@@ -50,6 +50,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -481,7 +482,7 @@ public class MainActivity extends Activity {
                 // @formatter:on
                 return builder.create();
             }
-        }.show(getFragmentManager(), "lol");
+        }.show(getFragmentManager(), "removeInbound");
 
         return super.onContextItemSelected(item);
     }
@@ -517,9 +518,23 @@ public class MainActivity extends Activity {
             }
         }
         if (!isWhatsappInstalled(this) && outboundDevice == null) {
-            showServerConfiguration();
+            // show the QR code by default on tablets with no whatsapp installed
+            showOutboundConfiguration();
         } else {
             TextView outboundView = (TextView) findViewById(R.id.outbound_device);
+            final boolean outboundConfigured = outboundDevice != null;
+            outboundView.setOnLongClickListener(new OnLongClickListener() {
+
+                @Override
+                public boolean onLongClick(View v) {
+                    if (outboundConfigured) {
+                        showRemoveOutboundDialog();
+                    } else {
+                        showOutboundConfiguration();
+                    }
+                    return true;
+                }
+            });
             if (outboundDevice != null) {
                 outboundView.setText(outboundDevice.type);
             } else {
@@ -534,6 +549,40 @@ public class MainActivity extends Activity {
                 }
             }
         }
+    }
+
+    private void showRemoveOutboundDialog() {
+        new RetainedDialogFragment() {
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                // @formatter:off
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        MainActivity.this)
+                    .setMessage(
+                        getResources().getString(
+                                R.string.remove_outbound_paired_message,
+                                outboundDevice.name))
+                    .setPositiveButton(
+                        android.R.string.ok, new OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                try {
+                                    PairOutboundActivity.savePairing(null, getApplicationContext());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                outboundDevice = null;
+                                updateLayout();
+                            }
+                        })
+                    .setNegativeButton(android.R.string.cancel, null);
+                // @formatter:on
+                return builder.create();
+            }
+        }.show(getFragmentManager(), "removeInbound");
     }
 
     /**
@@ -590,7 +639,7 @@ public class MainActivity extends Activity {
         listAdapter.notifyDataSetChanged();
     }
 
-    private void showServerConfiguration() {
+    private void showOutboundConfiguration() {
         Intent i = new Intent(this, PairOutboundActivity.class);
         startActivity(i);
     }
@@ -630,7 +679,7 @@ public class MainActivity extends Activity {
      * Called when the pair new device menu item (outbound) is pressed.
      */
     public void onNewOutboundDevicePressed() {
-        showServerConfiguration();
+        showOutboundConfiguration();
     }
 
     @Override

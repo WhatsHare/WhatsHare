@@ -170,6 +170,7 @@
     <string name="link">Condiviso link</string>
     <string name="unpair">Disassocia</string>
     <string name="remove_inbound_paired_message">Disassociare %1$s?\n\nWhatshare ignorerà tutti i messaggi provenienti da %1$s</string>
+    <string name="remove_outbound_paired_message">Disassociare %1$s?\n\nNon si potranno più condividere messaggi utilizzando Whatsapp installato su %1$s finché non verrà associato di nuovo</string>
     <string name="delete_file_saved_inbound">Rimuovi tutti i dispositivi in ingresso associati</string>
     <string name="at_least_one_char">almeno 1 carattere</string>
     <string name="wrong_char">solo lettere, numeri, \'-\', \'_\' o spazi</string>

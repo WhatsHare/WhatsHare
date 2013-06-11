@@ -70,6 +70,12 @@ import com.google.zxing.common.BitMatrix;
 public class PairOutboundActivity extends Activity {
 
     /**
+     * The name of the file that keeps reference of the device (which has
+     * Whatsapp installed) used to send messages to.
+     */
+    public static final String PAIRING_FILE_NAME = "pairing";
+
+    /**
      * An asynchronous task to call Google's URL shortener service.
      * 
      * @author Michele Bonazza
@@ -190,7 +196,7 @@ public class PairOutboundActivity extends Activity {
                         builder.setMessage(getString(R.string.failed_pairing));
                         if (device != null) {
                             assignedID = device.second;
-                            savePairing(device);
+                            savePairing(device, getApplicationContext());
                             builder.setMessage(String.format(getResources()
                                     .getString(R.string.successful_pairing,
                                             device.first.type)));
@@ -376,19 +382,44 @@ public class PairOutboundActivity extends Activity {
         return null;
     }
 
-    private void savePairing(Pair<PairedDevice, String> device)
-            throws IOException, JSONException {
-        FileOutputStream fos = openFileOutput("pairing", Context.MODE_PRIVATE);
-        // @formatter:off
+    /**
+     * Saves the argument <tt>device</tt> as the (only) configured outbound
+     * device.
+     * 
+     * <p>
+     * If <tt>device</tt> is <code>null</code>, the currently configured device
+     * is deleted.
+     * 
+     * @param device
+     *            the device to be stored, or <code>null</code> if the current
+     *            association must be discarded
+     * @param context
+     *            the application's context (used to open the association file
+     *            with)
+     * @throws IOException
+     *             in case something is wrong with the file
+     * @throws JSONException
+     *             in case something is wrong with the argument <tt>device</tt>
+     */
+    public static void savePairing(Pair<PairedDevice, String> device,
+            Context context) throws IOException, JSONException {
+        if (device == null) {
+            Utils.debug("deleting outbound device... %s",
+                    context.deleteFile(PAIRING_FILE_NAME) ? "success" : "fail");
+        } else {
+            FileOutputStream fos = context.openFileOutput(PAIRING_FILE_NAME,
+                    Context.MODE_PRIVATE);
+            // @formatter:off
         JSONObject json = new JSONObject()
                                 .put("name", device.first.name)
                                 .put("type", device.first.type)
                                 .put("assignedID", device.second);
         // @formatter:on
-        PrintStream writer = new PrintStream(fos);
-        writer.append(json.toString());
-        writer.flush();
-        writer.close();
+            PrintStream writer = new PrintStream(fos);
+            writer.append(json.toString());
+            writer.flush();
+            writer.close();
+        }
     }
 
     /**
