@@ -56,7 +56,7 @@
         </activity>
         
         <activity
-            android:name="it.mb.whatshare.PairInboundActivity"
+            android:name="it.mb.whatshare.PairOutboundActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden" >
         </activity>

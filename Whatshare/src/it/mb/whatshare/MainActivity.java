@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,11 +17,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,6 +75,19 @@ public class MainActivity extends Activity {
      * The file name of the list containing all inbound devices.
      */
     public static final String INBOUND_DEVICES_FILENAME = "inbound";
+
+    /**
+     * If set, all network requests are routed to localhost (on port 80) upon
+     * failure (to have a log of all requests that failed). An HTTP server must
+     * be running (for instance, echo_server.py in the extras_not_in_apk folder)
+     */
+    public static final boolean DEBUG_FAILED_REQUESTS = false;
+
+    /**
+     * The IP of the server that logs failed requests in case
+     * {@link #DEBUG_FAILED_REQUESTS} is set.
+     */
+    public static final String DEBUG_FAILED_REQUESTS_SERVER = "http://192.168.0.8";
 
     /**
      * A device paired with this one to share stuff on whatsapp.
@@ -205,6 +220,8 @@ public class MainActivity extends Activity {
      */
     private class CallGooGl extends AsyncTask<int[], Void, Void> {
 
+        private static final int RETRY_COUNT = 3;
+        private static final long RETRY_SLEEP_TIME = 1000L;
         private ProgressDialog dialog;
         private DialogFragment resultDialog;
 
@@ -261,6 +278,13 @@ public class MainActivity extends Activity {
                     e.printStackTrace();
                 }
             }
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    MainActivity.this.getListAdapter().notifyDataSetChanged();
+                }
+            });
             resultDialog = getCodeDialog(googl);
             return null;
         }
@@ -268,26 +292,55 @@ public class MainActivity extends Activity {
         private String shorten(String encodedID, String encodedAssignedID) {
             HttpPost post = new HttpPost(SHORTENER_URL);
             String shortURL = null;
+            int tries = 0;
             try {
                 post.setEntity(new StringEntity(String.format(
                         "{\"longUrl\": \"%s\"}",
                         getURL(encodedID, encodedAssignedID))));
                 post.setHeader("Content-Type", "application/json");
-                String response = new DefaultHttpClient().execute(post,
-                        new BasicResponseHandler());
+                DefaultHttpClient client = new DefaultHttpClient();
+                client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(
+                        0, false));
+                String response = null;
+                while (response == null && tries < RETRY_COUNT) {
+                    try {
+                        response = client.execute(post,
+                                new BasicResponseHandler());
+                    } catch (IOException e) {
+                        // maybe just try again...
+                        tries++;
+                        Utils.debug("attempt %d failed... waiting", tries);
+                        try {
+                            // life is too short for exponential backoff
+                            Thread.sleep(RETRY_SLEEP_TIME * tries);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
                 Utils.debug("response is %s", response);
-                JSONObject jsonResponse = new JSONObject(response);
-                shortURL = jsonResponse.getString("id");
+                if (response != null) {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    shortURL = jsonResponse.getString("id");
+                } else if (DEBUG_FAILED_REQUESTS) {
+                    Utils.debug("attempt %d failed, giving up", RETRY_COUNT);
+                    debugPost(post, client);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
             return shortURL;
+        }
+
+        private void debugPost(HttpPost post, HttpClient client) {
+            post.setURI(URI.create(DEBUG_FAILED_REQUESTS_SERVER));
+            try {
+                client.execute(post, new BasicResponseHandler());
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         }
 
         private DialogFragment getCodeDialog(final String googl) {
@@ -308,15 +361,6 @@ public class MainActivity extends Activity {
                                 @Override
                                 public void onClick(DialogInterface dialog,
                                         int which) {
-                                    final BaseAdapter adapter = MainActivity.this
-                                            .getListAdapter();
-                                    runOnUiThread(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-                                            adapter.notifyDataSetChanged();
-                                        }
-                                    });
                                     if (googl != null) {
                                         Resources res = getResources();
                                         String howManyTotal = res
@@ -416,13 +460,15 @@ public class MainActivity extends Activity {
     public boolean onContextItemSelected(MenuItem item) {
         new RetainedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
+                // @formatter:off
                 AlertDialog.Builder builder = new AlertDialog.Builder(
-                        MainActivity.this);
-                builder.setMessage(getResources().getString(
-                        R.string.remove_inbound_paired_message,
-                        deviceToBeUnpaired.name));
-                builder.setPositiveButton(android.R.string.ok,
-                        new OnClickListener() {
+                        MainActivity.this)
+                    .setMessage(
+                        getResources().getString(
+                                R.string.remove_inbound_paired_message,
+                                deviceToBeUnpaired.name))
+                    .setPositiveButton(
+                        android.R.string.ok, new OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialog,
@@ -430,7 +476,9 @@ public class MainActivity extends Activity {
                                 removePaired(deviceToBeUnpaired);
                                 deviceToBeUnpaired = null;
                             }
-                        });
+                        })
+                    .setNegativeButton(android.R.string.cancel, null);
+                // @formatter:on
                 return builder.create();
             }
         }.show(getFragmentManager(), "lol");
@@ -543,7 +591,7 @@ public class MainActivity extends Activity {
     }
 
     private void showServerConfiguration() {
-        Intent i = new Intent(this, PairInboundActivity.class);
+        Intent i = new Intent(this, PairOutboundActivity.class);
         startActivity(i);
     }
 

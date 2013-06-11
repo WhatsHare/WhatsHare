@@ -67,7 +67,7 @@ import com.google.zxing.common.BitMatrix;
  * @author Michele Bonazza
  * 
  */
-public class PairInboundActivity extends Activity {
+public class PairOutboundActivity extends Activity {
 
     /**
      * An asynchronous task to call Google's URL shortener service.
@@ -87,7 +87,7 @@ public class PairInboundActivity extends Activity {
          */
         @Override
         protected void onPreExecute() {
-            dialog = ProgressDialog.show(PairInboundActivity.this,
+            dialog = ProgressDialog.show(PairOutboundActivity.this,
                     getResources().getString(R.string.please_wait),
                     getResources().getString(R.string.wait_message));
         }
@@ -185,7 +185,7 @@ public class PairInboundActivity extends Activity {
             return new RetainedDialogFragment() {
                 public Dialog onCreateDialog(Bundle savedInstanceState) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(
-                            PairInboundActivity.this);
+                            PairOutboundActivity.this);
                     try {
                         builder.setMessage(getString(R.string.failed_pairing));
                         if (device != null) {
