@@ -19,7 +19,9 @@ public class RetainedDialogFragment extends DialogFragment {
      * changes.
      */
     public RetainedDialogFragment() {
-        setRetainInstance(true);
+        // this would be needed were we to save fragments on configuration
+        // change, but we're temporarily just ignoring configChanges
+        // setRetainInstance(true);
     }
 
     /*

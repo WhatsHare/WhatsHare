@@ -696,7 +696,6 @@ public class MainActivity extends Activity {
         GCMIntentService.registerWithGCM(this);
         View menu = getLayoutInflater().inflate(R.layout.menu, null);
         setContentView(menu);
-        onNewIntent(getIntent());
     }
 
     /**
