@@ -428,18 +428,6 @@ public class MainActivity extends Activity {
     /*
      * (non-Javadoc)
      * 
-     * @see android.app.Activity#onNewIntent(android.content.Intent)
-     */
-    @Override
-    protected void onNewIntent(final Intent intent) {
-        super.onNewIntent(intent);
-        // app was started through launcher
-        updateLayout();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu,
      * android.view.View, android.view.ContextMenu.ContextMenuInfo)
      */
@@ -450,6 +438,17 @@ public class MainActivity extends Activity {
         menu.add(R.string.unpair);
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
         deviceToBeUnpaired = inboundDevices.get(info.position);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateLayout();
     }
 
     /*
@@ -517,36 +516,30 @@ public class MainActivity extends Activity {
                 e.printStackTrace();
             }
         }
-        if (!isWhatsappInstalled(this) && outboundDevice == null) {
-            // show the QR code by default on tablets with no whatsapp installed
-            showOutboundConfiguration();
+        final TextView outboundView = (TextView) findViewById(R.id.outbound_device);
+        if (outboundDevice != null) {
+            outboundView.setText(outboundDevice.type);
         } else {
-            TextView outboundView = (TextView) findViewById(R.id.outbound_device);
-            final boolean outboundConfigured = outboundDevice != null;
-            outboundView.setOnLongClickListener(new OnLongClickListener() {
+            outboundView.setText(R.string.no_device);
+        }
+        final boolean outboundConfigured = outboundDevice != null;
+        outboundView.setOnLongClickListener(new OnLongClickListener() {
 
-                @Override
-                public boolean onLongClick(View v) {
-                    if (outboundConfigured) {
-                        showRemoveOutboundDialog();
-                    } else {
-                        showOutboundConfiguration();
-                    }
-                    return true;
+            @Override
+            public boolean onLongClick(View v) {
+                if (outboundConfigured) {
+                    showRemoveOutboundDialog();
+                } else {
+                    showOutboundConfiguration();
                 }
-            });
-            if (outboundDevice != null) {
-                outboundView.setText(outboundDevice.type);
-            } else {
-                outboundView.setText(R.string.no_device);
+                return true;
             }
-            if (!isWhatsappInstalled(this)) {
-                // no inbound device can ever be configured
-                int[] toRemove = { R.id.inbound, R.id.inboundDevices };
-                for (int item : toRemove) {
-                    View view = findViewById(item);
-                    ((ViewGroup) view.getParent()).removeView(view);
-                }
+        });
+        if (!isWhatsappInstalled(this)) {
+            // no inbound device can ever be configured
+            int[] toRemove = { R.id.inbound, R.id.inboundDevices };
+            for (int item : toRemove) {
+                findViewById(item).setVisibility(View.GONE);
             }
         }
     }
@@ -560,7 +553,7 @@ public class MainActivity extends Activity {
                     .setMessage(
                         getResources().getString(
                                 R.string.remove_outbound_paired_message,
-                                outboundDevice.name))
+                                outboundDevice.type))
                     .setPositiveButton(
                         android.R.string.ok, new OnClickListener() {
 
@@ -568,7 +561,7 @@ public class MainActivity extends Activity {
                             public void onClick(DialogInterface dialog,
                                     int which) {
                                 try {
-                                    PairOutboundActivity.savePairing(null, getApplicationContext());
+                                    PairOutboundActivity.savePairing(null, MainActivity.this);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 } catch (JSONException e) {
