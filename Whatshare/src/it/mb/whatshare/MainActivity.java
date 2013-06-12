@@ -644,6 +644,7 @@ public class MainActivity extends Activity {
     private void onDeleteSavedInboundPressed() {
         Utils.debug("deleting inbound devices... %s", getApplicationContext()
                 .deleteFile(INBOUND_DEVICES_FILENAME) ? "success" : "fail");
+        inboundDevices = new ArrayList<PairedDevice>();
         BaseAdapter listAdapter = getListAdapter();
         listAdapter.notifyDataSetChanged();
     }
