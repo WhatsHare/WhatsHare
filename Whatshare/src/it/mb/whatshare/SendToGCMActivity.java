@@ -8,6 +8,7 @@ import java.io.OptionalDataException;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,6 +90,7 @@ public class SendToGCMActivity extends Activity {
     private static final String GCM_URL = "https://android.googleapis.com/gcm/send";
     private static final Pattern FLIPBOARD_PATTERN = Pattern
             .compile("\\w+\\:(.+)");
+    private static AtomicInteger notificationCounter = new AtomicInteger();
     private String registrationID = "";
     private PairedDevice outboundDevice;
 
@@ -164,28 +166,33 @@ public class SendToGCMActivity extends Activity {
      */
     @Override
     protected void onNewIntent(final Intent intent) {
-        // send to paired device if any
-        try {
-            if (outboundDevice == null) {
-                Pair<PairedDevice, String> paired = loadOutboundPairing(this);
-                if (paired != null)
-                    outboundDevice = paired.first;
+        if (intent.hasExtra(Intent.EXTRA_TEXT)) {
+            // send to paired device if any
+            try {
+                if (outboundDevice == null) {
+                    Pair<PairedDevice, String> paired = loadOutboundPairing(this);
+                    if (paired != null)
+                        outboundDevice = paired.first;
+                }
+                if (outboundDevice != null) {
+                    // share with other device
+                    shareViaGCM(intent);
+                    finish();
+                    return;
+                }
+            } catch (OptionalDataException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            if (outboundDevice != null) {
-                // share with other device
-                shareViaGCM(intent);
-                finish();
-                return;
-            }
-        } catch (OptionalDataException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            // can't load paired device from file
+            showNoPairedDeviceDialog();
+        } else {
+            // user clicked on the notification
+            notificationCounter.set(0);
         }
-        // can't load paired device from file
-        showNoPairedDeviceDialog();
     }
 
     /**
@@ -252,15 +259,20 @@ public class SendToGCMActivity extends Activity {
         Utils.debug("sharing with %s this: '%s'", outboundDevice.type, text);
         new CallGCM().execute(text);
         String title = getString(R.string.app_name);
+        Intent onNotificationDiscarded = new Intent(this,
+                SendToGCMActivity.class);
         PendingIntent notificationIntent = PendingIntent.getActivity(this, 0,
-                new Intent(), 0);
+                onNotificationDiscarded, 0);
         Notification notification = null;
+        int notificationNumber = notificationCounter.incrementAndGet();
         // @formatter:off
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.notification_icon, 0)
                 .setContentTitle(title)
                 .setContentText(String.format(getString(R.string.share_success), getString(sharedWhat), outboundDevice.type))
-                .setContentIntent(notificationIntent);
+                .setContentIntent(notificationIntent)
+                .setDeleteIntent(PendingIntent.getActivity(this, 0, onNotificationDiscarded, 0))
+                .setNumber(notificationNumber);
         // @formatter:on
         if (Build.VERSION.SDK_INT > 15) {
             notification = buildForJellyBean(builder);
@@ -268,8 +280,10 @@ public class SendToGCMActivity extends Activity {
             notification = builder.getNotification();
         }
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
-                .notify(0, notification);
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // cancel previous notification to clean up garbage in the status bar
+        nm.cancel(notificationNumber - 1);
+        nm.notify(notificationNumber, notification);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
