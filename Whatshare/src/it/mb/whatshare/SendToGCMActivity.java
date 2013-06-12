@@ -192,6 +192,7 @@ public class SendToGCMActivity extends Activity {
         } else {
             // user clicked on the notification
             notificationCounter.set(0);
+            finish();
         }
     }
 
@@ -247,7 +248,6 @@ public class SendToGCMActivity extends Activity {
         }.show(getFragmentManager(), "no paired device");
     }
 
-    @SuppressWarnings("deprecation")
     private void shareViaGCM(Intent intent) {
         String subject = intent.getExtras().getString(Intent.EXTRA_SUBJECT);
         String text = intent.getExtras().getString(Intent.EXTRA_TEXT);
@@ -258,6 +258,11 @@ public class SendToGCMActivity extends Activity {
                 : R.string.selection;
         Utils.debug("sharing with %s this: '%s'", outboundDevice.type, text);
         new CallGCM().execute(text);
+        showNotification(sharedWhat);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void showNotification(int sharedWhat) {
         String title = getString(R.string.app_name);
         Intent onNotificationDiscarded = new Intent(this,
                 SendToGCMActivity.class);
@@ -265,11 +270,14 @@ public class SendToGCMActivity extends Activity {
                 onNotificationDiscarded, 0);
         Notification notification = null;
         int notificationNumber = notificationCounter.incrementAndGet();
+        String content = getString(R.string.share_success,
+                getString(sharedWhat), outboundDevice.type);
         // @formatter:off
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.notification_icon, 0)
                 .setContentTitle(title)
-                .setContentText(String.format(getString(R.string.share_success), getString(sharedWhat), outboundDevice.type))
+                .setContentText(content)
+                .setTicker(content)
                 .setContentIntent(notificationIntent)
                 .setDeleteIntent(PendingIntent.getActivity(this, 0, onNotificationDiscarded, 0))
                 .setNumber(notificationNumber);
@@ -288,6 +296,7 @@ public class SendToGCMActivity extends Activity {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private Notification buildForJellyBean(Notification.Builder builder) {
+        builder.setPriority(Notification.PRIORITY_MAX);
         return builder.build();
     }
 
