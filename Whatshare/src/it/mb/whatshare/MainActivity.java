@@ -8,58 +8,28 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
-import java.util.regex.Pattern;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.ListFragment;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.InputType;
+import android.support.v4.app.FragmentActivity;
 import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -72,7 +42,7 @@ import com.google.analytics.tracking.android.EasyTracker;
  * @author Michele Bonazza
  * 
  */
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
     /**
      * The file name of the list containing all inbound devices.
@@ -171,243 +141,6 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * The list fragment containing all inbound devices.
-     * 
-     * @author Michele Bonazza
-     * 
-     */
-    public static class InboundDevicesList extends ListFragment {
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see
-         * android.app.ListFragment#onCreateView(android.view.LayoutInflater,
-         * android.view.ViewGroup, android.os.Bundle)
-         */
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.inbound_devices_fragment,
-                    container);
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see android.app.Fragment#onAttach(android.app.Activity)
-         */
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            setListAdapter(((MainActivity) activity).getListAdapter());
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see android.app.Fragment#onActivityCreated(android.os.Bundle)
-         */
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            registerForContextMenu(getListView());
-        }
-
-    }
-
-    /**
-     * An asynchronous task to call Google's URL shortener service.
-     * 
-     * @author Michele Bonazza
-     * 
-     */
-    private class CallGooGl extends AsyncTask<int[], Void, Void> {
-
-        private static final int RETRY_COUNT = 3;
-        private static final long RETRY_SLEEP_TIME = 1000L;
-        private ProgressDialog dialog;
-        private DialogFragment resultDialog;
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see android.os.AsyncTask#onPreExecute()
-         */
-        @Override
-        protected void onPreExecute() {
-            dialog = ProgressDialog.show(MainActivity.this, getResources()
-                    .getString(R.string.please_wait),
-                    getResources().getString(R.string.wait_message));
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-         */
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            dialog.dismiss();
-            resultDialog.show(getFragmentManager(), "code");
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see android.os.AsyncTask#doInBackground(Params[])
-         */
-        @Override
-        protected Void doInBackground(int[]... params) {
-            registrationID = GCMIntentService.getRegistrationID();
-            String encodedID = encrypt(params[0], registrationID.toCharArray());
-            String encodedAssignedID = encrypt(params[0],
-                    String.valueOf(deviceToBePaired.name.hashCode())
-                            .toCharArray());
-            Utils.debug(
-                    "shortening, this device's encodedID is %s, paired devices's"
-                            + " encodedAssignedID is %s", encodedID,
-                    encodedAssignedID);
-            String googl = shorten(encodedID, encodedAssignedID);
-            if (googl != null) {
-                googl = googl.substring(googl.lastIndexOf('/') + 1);
-                try {
-                    saveInboundPairing(deviceToBePaired);
-                } catch (OptionalDataException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    MainActivity.this.getListAdapter().notifyDataSetChanged();
-                }
-            });
-            resultDialog = getCodeDialog(googl);
-            return null;
-        }
-
-        private String shorten(String encodedID, String encodedAssignedID) {
-            HttpPost post = new HttpPost(SHORTENER_URL);
-            String shortURL = null;
-            int tries = 0;
-            try {
-                post.setEntity(new StringEntity(String.format(
-                        "{\"longUrl\": \"%s\"}",
-                        getURL(encodedID, encodedAssignedID))));
-                post.setHeader("Content-Type", "application/json");
-                DefaultHttpClient client = new DefaultHttpClient();
-                client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(
-                        0, false));
-                String response = null;
-                while (response == null && tries < RETRY_COUNT) {
-                    try {
-                        response = client.execute(post,
-                                new BasicResponseHandler());
-                    } catch (IOException e) {
-                        // maybe just try again...
-                        tries++;
-                        Utils.debug("attempt %d failed... waiting", tries);
-                        try {
-                            // life is too short for exponential backoff
-                            Thread.sleep(RETRY_SLEEP_TIME * tries);
-                        } catch (InterruptedException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-                Utils.debug("response is %s", response);
-                if (response != null) {
-                    JSONObject jsonResponse = new JSONObject(response);
-                    shortURL = jsonResponse.getString("id");
-                } else if (DEBUG_FAILED_REQUESTS) {
-                    Utils.debug("attempt %d failed, giving up", RETRY_COUNT);
-                    debugPost(post, client);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            return shortURL;
-        }
-
-        private void debugPost(HttpPost post, HttpClient client) {
-            post.setURI(URI.create(DEBUG_FAILED_REQUESTS_SERVER));
-            try {
-                client.execute(post, new BasicResponseHandler());
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-
-        private DialogFragment getCodeDialog(final String googl) {
-            return new RetainedDialogFragment() {
-                public Dialog onCreateDialog(Bundle savedInstanceState) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(
-                            MainActivity.this);
-                    if (googl != null) {
-                        builder.setMessage(String.format(getResources()
-                                .getString(R.string.code_dialog), googl));
-                    } else {
-                        builder.setMessage(getResources().getString(
-                                R.string.code_dialog_fail));
-                    }
-                    builder.setPositiveButton(android.R.string.ok,
-                            new OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                        int which) {
-                                    if (googl != null) {
-                                        Resources res = getResources();
-                                        String howManyTotal = res
-                                                .getQuantityString(
-                                                        R.plurals.added_device,
-                                                        adapter.getCount(),
-                                                        adapter.getCount());
-                                        Toast.makeText(
-                                                getActivity(),
-                                                res.getString(
-                                                        R.string.device_paired,
-                                                        howManyTotal),
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
-                    return builder.create();
-                }
-            };
-        }
-    }
-
-    /**
-     * All valid characters for URLs used by this app.
-     */
-    static final char[] CHARACTERS = new char[] { '0', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
-            'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-            'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-            'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
-            'W', 'X', 'Y', 'Z', '-', '_' };
-    /**
-     * Map that indexes every valid character by its position in the map itself.
-     */
-    static final HashMap<Character, Integer> CHAR_MAP = new HashMap<Character, Integer>() {
-        private static final long serialVersionUID = 1599960929705590053L;
-        {
-            for (int i = 0; i < CHARACTERS.length; i++) {
-                put(CHARACTERS[i], i);
-            }
-        }
-    };
-    /**
      * The name of Whatsapp's package.
      */
     static final String WHATSAPP_PACKAGE = "com.whatsapp";
@@ -420,11 +153,20 @@ public class MainActivity extends Activity {
      */
     static final String SHORTENER_URL = "https://www.googleapis.com/urlshortener/v1/url?key="
             + API_KEY;
-    private static final String VALID_DEVICE_ID = "[A-Za-z0-9\\-\\_\\s]{1,30}";
-    private static final int QR_CODE_SCANNED = 0;
-    private static final int SHARED_SECRET_SIZE = 4;
-    private String registrationID = "";
-    private PairedDevice outboundDevice, deviceToBeUnpaired, deviceToBePaired;
+    /**
+     * The number of random keys used to encrypt messages with.
+     */
+    static final int SHARED_SECRET_SIZE = 4;
+    /**
+     * The regex used to filter names chosen by the user for inbound devices.
+     */
+    static final String VALID_DEVICE_ID = "[A-Za-z0-9\\-\\_\\s]{1,30}";
+    /**
+     * The code used by {@link #onActivityResult(int, int, Intent)} to detect
+     * incoming replies from the QR code capture activity.
+     */
+    static final int QR_CODE_SCANNED = 0;
+    private PairedDevice outboundDevice, deviceToBeUnpaired;
     private List<PairedDevice> inboundDevices = new ArrayList<PairedDevice>();
     private ArrayAdapter<String> adapter;
 
@@ -461,47 +203,31 @@ public class MainActivity extends Activity {
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        new RetainedDialogFragment() {
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                // @formatter:off
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        MainActivity.this)
-                    .setMessage(
-                        getResources().getString(
-                                R.string.remove_inbound_paired_message,
-                                deviceToBeUnpaired.name))
-                    .setPositiveButton(
-                        android.R.string.ok, new OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                removePaired(deviceToBeUnpaired);
-                                deviceToBeUnpaired = null;
-                            }
-                        })
-                    .setNegativeButton(android.R.string.cancel, null);
-                // @formatter:on
-                return builder.create();
-            }
-        }.show(getFragmentManager(), "removeInbound");
-
+        Dialogs.confirmUnpairInbound(deviceToBeUnpaired, this);
         return super.onContextItemSelected(item);
     }
 
-    private void removePaired(PairedDevice device) {
-        Utils.debug("removing %s... success? %s", device.name,
-                inboundDevices.remove(device));
-        try {
+    /**
+     * Removes the currently selected device from the list of inbound devices.
+     */
+    void removePaired() {
+        if (deviceToBeUnpaired != null) {
+            Utils.debug("removePaired(): removing %s... success? %s",
+                    deviceToBeUnpaired.name,
+                    inboundDevices.remove(deviceToBeUnpaired));
+            deviceToBeUnpaired = null;
             writePairedInboundFile(inboundDevices);
-        } catch (IOException e) {
-            // TODO should notify the user
-            e.printStackTrace();
+            BaseAdapter listAdapter = getListAdapter();
+            listAdapter.notifyDataSetChanged();
+        } else {
+            Utils.debug("removePaired(): no device is currently set to be unpaired");
         }
-        BaseAdapter listAdapter = getListAdapter();
-        listAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Refreshes the layout of this activity, also reloading configured devices
+     * from files.
+     */
     private void updateLayout() {
         if (outboundDevice == null) {
             try {
@@ -531,7 +257,8 @@ public class MainActivity extends Activity {
             @Override
             public boolean onLongClick(View v) {
                 if (outboundConfigured) {
-                    showRemoveOutboundDialog();
+                    Dialogs.confirmRemoveOutbound(outboundDevice,
+                            MainActivity.this);
                 } else {
                     showOutboundConfiguration();
                 }
@@ -560,38 +287,29 @@ public class MainActivity extends Activity {
         return true;
     }
 
-    private void showRemoveOutboundDialog() {
-        new RetainedDialogFragment() {
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                // @formatter:off
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        MainActivity.this)
-                    .setMessage(
-                        getResources().getString(
-                                R.string.remove_outbound_paired_message,
-                                outboundDevice.type))
-                    .setPositiveButton(
-                        android.R.string.ok, new OnClickListener() {
+    /**
+     * Removes the currently configured outbound device and updates both the
+     * current layout and the configuration file.
+     */
+    void deleteOutboundDevice() {
+        outboundDevice = null;
+        try {
+            PairOutboundActivity.savePairing(null, this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        updateLayout();
+    }
 
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                try {
-                                    PairOutboundActivity.savePairing(null, MainActivity.this);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                outboundDevice = null;
-                                updateLayout();
-                            }
-                        })
-                    .setNegativeButton(android.R.string.cancel, null);
-                // @formatter:on
-                return builder.create();
-            }
-        }.show(getFragmentManager(), "removeInbound");
+    /**
+     * Returns the number of currently paired inbound devices.
+     * 
+     * @return the number of currently paired inbound devices
+     */
+    int getInboundDevicesCount() {
+        return adapter.getCount();
     }
 
     /**
@@ -658,31 +376,7 @@ public class MainActivity extends Activity {
      * Called when the pair new device menu item (inbound) is pressed.
      */
     public void onNewInboundDevicePressed() {
-        DialogFragment dialog = new RetainedDialogFragment() {
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        MainActivity.this);
-                builder.setMessage(getResources().getString(
-                        R.string.new_inbound_instructions));
-                builder.setPositiveButton(android.R.string.ok,
-                        new OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                Intent intent = new Intent(
-                                        "com.google.zxing.client.android.SCAN");
-                                intent.putExtra(
-                                        "com.google.zxing.client.android.SCAN.SCAN_MODE",
-                                        "QR_CODE_MODE");
-                                getActivity().startActivityForResult(intent,
-                                        QR_CODE_SCANNED);
-                            }
-                        });
-                return builder.create();
-            }
-        };
-        dialog.show(getFragmentManager(), "instruction");
+        Dialogs.pairInboundInstructions(this);
     }
 
     /**
@@ -769,95 +463,28 @@ public class MainActivity extends Activity {
                         deviceName.append(keys[i]);
                         space = " ";
                     }
-                    promptUserForID(deviceName.toString(), sharedSecret);
+                    Dialogs.prompForInboundID(deviceName.toString(),
+                            sharedSecret, this);
                 } catch (NumberFormatException e) {
-                    DialogFragment failDialog = new RetainedDialogFragment() {
-                        public Dialog onCreateDialog(Bundle savedInstanceState) {
-                            return new AlertDialog.Builder(getActivity())
-                                    .setMessage(R.string.qr_code_fail)
-                                    .setPositiveButton(R.string.qr_code_retry,
-                                            new OnClickListener() {
-
-                                                @Override
-                                                public void onClick(
-                                                        DialogInterface dialog,
-                                                        int which) {
-                                                    // do nothing
-                                                }
-                                            }).create();
-                        }
-                    };
-                    failDialog.show(getFragmentManager(), "fail");
+                    Dialogs.onQRFail(this);
                 }
             }
         }
     }
 
-    private void promptUserForID(final String deviceName,
-            final int[] sharedSecret) {
-        DialogFragment prompt = new RetainedDialogFragment() {
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                final EditText input = new EditText(MainActivity.this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                input.setText(deviceName);
-                input.setSelection(deviceName.length());
-                // @formatter:off
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(R.string.device_id_chooser_title)
-                        .setView(input)
-                        .setPositiveButton(android.R.string.ok, null);
-                    // @formatter:on
-                final AlertDialog alertDialog = builder.create();
-                alertDialog
-                        .setOnShowListener(new DialogInterface.OnShowListener() {
-
-                            @Override
-                            public void onShow(DialogInterface dialog) {
-                                Button b = alertDialog
-                                        .getButton(AlertDialog.BUTTON_POSITIVE);
-                                b.setOnClickListener(new View.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(View view) {
-                                        input.setError(null);
-                                        String deviceId = input.getText()
-                                                .toString();
-                                        if (!Pattern.matches(VALID_DEVICE_ID,
-                                                deviceId)) {
-                                            if (deviceId.length() < 1) {
-                                                input.setError(getResources()
-                                                        .getString(
-                                                                R.string.at_least_one_char));
-                                            } else {
-                                                input.setError(getResources()
-                                                        .getString(
-                                                                R.string.wrong_char));
-                                            }
-                                        } else if (!isValidChoice(deviceId)) {
-                                            input.setError(getResources()
-                                                    .getString(
-                                                            R.string.id_already_in_use));
-                                        } else {
-                                            deviceToBePaired = new PairedDevice(
-                                                    deviceId, deviceName);
-                                            new CallGooGl()
-                                                    .execute(sharedSecret);
-                                            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-                                                    input.getWindowToken(), 0);
-                                            alertDialog.dismiss();
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                return alertDialog;
-            }
-        };
-
-        prompt.show(getFragmentManager(), "chooseName");
-    }
-
-    private boolean isValidChoice(String deviceID) {
+    /**
+     * Returns whether the argument <tt>deviceID</tt> is valid.
+     * 
+     * @param deviceID
+     *            the ID to be checked
+     * @return <code>true</code> if <tt>deviceID</tt> is a non-empty string that
+     *         matches {@link #VALID_DEVICE_ID} and is not in use for any other
+     *         inbound device.
+     */
+    public boolean isValidChoice(String deviceID) {
+        if (deviceID == null || deviceID.isEmpty()
+                || !deviceID.matches(VALID_DEVICE_ID))
+            return false;
         int hashed = deviceID.hashCode();
         for (PairedDevice device : inboundDevices) {
             if (hashed == device.name.hashCode()) {
@@ -867,116 +494,104 @@ public class MainActivity extends Activity {
         return true;
     }
 
-    private String encrypt(int[] sharedSecret, char[] content) {
-        for (int i = 0; i < content.length; i++) {
-            int charIndex = CHAR_MAP.get(content[i]);
-            int secret = sharedSecret[i % SHARED_SECRET_SIZE];
-            content[i] = CHARACTERS[(charIndex + secret) % CHARACTERS.length];
-        }
-        return new String(content);
-    }
-
-    private static String getURL(String encodedId, String deviceAssignedID) {
-        StringBuilder builder = new StringBuilder("http://");
-        Random generator = new Random();
-        int sum = 0;
-        for (int i = 0; i < 8; i++) {
-            char rand = CHARACTERS[generator.nextInt(CHARACTERS.length)];
-            builder.append(rand);
-            // no idea why they set lowercase for domain names...
-            sum += CHAR_MAP.get(Character.toLowerCase(rand));
-        }
-        builder.append("/");
-        builder.append(sum);
-        builder.append("?model=");
-        try {
-            builder.append(URLEncoder.encode(
-                    String.format("%s %s", capitalize(Build.MANUFACTURER),
-                            Build.MODEL), "UTF-8").replaceAll("\\+", "%20"));
-            builder.append("&yourid=");
-            builder.append(deviceAssignedID);
-            builder.append("&id=");
-            builder.append(encodedId);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return builder.toString();
-    }
-
     /**
-     * Capitalizes a string.
+     * Returns a list of all devices currently configured as inbound devices by
+     * loading it from the configuration file.
      * 
-     * @param s
-     *            the string to be capitalized
-     * @return the capitalized string
+     * @return a (potentially empty) list of currently paired inbound devices
      */
-    static String capitalize(String s) {
-        if (s == null || s.length() == 0)
-            return "";
-        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
-    }
-
     @SuppressWarnings("unchecked")
-    private List<PairedDevice> loadInboundPairing()
-            throws OptionalDataException, ClassNotFoundException, IOException {
-        FileInputStream fis = openFileInput(INBOUND_DEVICES_FILENAME);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        Object read = ois.readObject();
-        fis.close();
-        return (ArrayList<PairedDevice>) read;
-    }
-
-    private void saveInboundPairing(PairedDevice newDevice)
-            throws OptionalDataException, ClassNotFoundException, IOException {
-        List<PairedDevice> alreadyPaired = new ArrayList<PairedDevice>();
+    List<PairedDevice> loadInboundPairing() {
+        FileInputStream fis = null;
         try {
-            alreadyPaired = loadInboundPairing();
+            fis = openFileInput(INBOUND_DEVICES_FILENAME);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            Object read = ois.readObject();
+            return (ArrayList<PairedDevice>) read;
         } catch (FileNotFoundException e) {
-            // it's ok, no file has been saved yet
-        }
-        alreadyPaired.add(newDevice);
-        writePairedInboundFile(alreadyPaired);
-        deviceToBePaired = null;
-    }
-
-    private void writePairedInboundFile(List<PairedDevice> pairedDevices)
-            throws IOException {
-        FileOutputStream fos = openFileOutput(INBOUND_DEVICES_FILENAME,
-                Context.MODE_PRIVATE);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(pairedDevices);
-        fos.close();
-    }
-
-    private ArrayAdapter<String> getListAdapter() {
-        List<String> deviceNames = new ArrayList<String>();
-        try {
-            if (isWhatsappInstalled(this)) {
-                inboundDevices = loadInboundPairing();
-                if (inboundDevices == null)
-                    inboundDevices = new ArrayList<PairedDevice>();
-                Utils.debug("%d device(s)", inboundDevices.size());
-                for (PairedDevice device : inboundDevices) {
-                    deviceNames.add(device.name);
-                }
-            }
-        } catch (OptionalDataException e) {
+            // it's ok, no inbound devices have been configured
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            // it's ok
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            if (fis != null)
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        return new ArrayList<PairedDevice>();
+
+    }
+
+    /**
+     * Reloads the list of configured inbound devices from file and updates the
+     * list in the UI.
+     */
+    void refreshInboundDevicesList() {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                getListAdapter().notifyDataSetChanged();
+            }
+        });
+    }
+
+    /**
+     * Loads the list of configured inbound devices from the configuration file
+     * and creates an {@link ArrayAdapter} wrapping them.
+     * 
+     * @return a new {@link ArrayAdapter} that contains all currently configured
+     *         inbound devices (potentially none)
+     */
+    ArrayAdapter<String> getListAdapter() {
+        List<String> deviceNames = new ArrayList<String>();
+        if (isWhatsappInstalled(this)) {
+            inboundDevices = loadInboundPairing();
+            Utils.debug("%d device(s)", inboundDevices.size());
+            for (PairedDevice device : inboundDevices) {
+                deviceNames.add(device.name);
+            }
         }
         if (adapter == null) {
             adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, deviceNames);
         } else {
             adapter.clear();
-            adapter.addAll(deviceNames);
+            for (String deviceName : deviceNames) {
+                adapter.add(deviceName);
+            }
         }
         return adapter;
+    }
+
+    /**
+     * Overwrites the current configuration file for outbound devices storing
+     * the argument list of devices.
+     * 
+     * @param pairedDevices
+     *            the new list of devices to be saved to disk
+     */
+    void writePairedInboundFile(List<PairedDevice> pairedDevices) {
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(INBOUND_DEVICES_FILENAME, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(pairedDevices);
+        } catch (IOException e) {
+            // TODO should notify the user
+            e.printStackTrace();
+        } finally {
+            if (fos != null)
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 
 }

@@ -78,15 +78,8 @@
             android:src="@drawable/content_new" />
 
     </RelativeLayout>
+    
+    <include layout="@layout/inbound_devices_fragment"/>
 
-    <fragment
-        android:name="it.mb.whatshare.MainActivity$InboundDevicesList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:id="@+id/inboundDevices"
-        tools:layout="@layout/inbound_devices_fragment" />
 
 </LinearLayout>

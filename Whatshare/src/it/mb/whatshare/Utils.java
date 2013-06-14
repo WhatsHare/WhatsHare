@@ -297,6 +297,19 @@ public final class Utils {
     }
 
     /**
+     * Capitalizes a string.
+     * 
+     * @param s
+     *            the string to be capitalized
+     * @return the capitalized string
+     */
+    static String capitalize(String s) {
+        if (s == null || s.length() == 0)
+            return "";
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    /**
      * Checks whether <b>any</b> of the provided objects is <code>null</code>.
      * 
      * @param objects

@@ -4,8 +4,8 @@
  */
 package it.mb.whatshare;
 
-import static it.mb.whatshare.MainActivity.CHARACTERS;
-import static it.mb.whatshare.MainActivity.CHAR_MAP;
+import static it.mb.whatshare.CallGooGlInbound.CHARACTERS;
+import static it.mb.whatshare.CallGooGlInbound.CHAR_MAP;
 import it.mb.whatshare.MainActivity.PairedDevice;
 
 import java.io.FileNotFoundException;
@@ -27,21 +27,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -68,7 +63,7 @@ import com.google.zxing.common.BitMatrix;
  * @author Michele Bonazza
  * 
  */
-public class PairOutboundActivity extends Activity {
+public class PairOutboundActivity extends FragmentActivity {
 
     /**
      * The name of the file that keeps reference of the device (which has
@@ -77,15 +72,16 @@ public class PairOutboundActivity extends Activity {
     public static final String PAIRING_FILE_NAME = "pairing";
 
     /**
-     * An asynchronous task to call Google's URL shortener service.
+     * An asynchronous task to call Google's URL shortener service in order to
+     * retrieve information stored within the expanded URL by the outbound
+     * device (the one where Whatsapp is installed).
      * 
      * @author Michele Bonazza
-     * 
      */
-    private class CallGooGl extends AsyncTask<String, Void, Void> {
+    private class CallGooGlOutbound extends AsyncTask<String, Void, Void> {
 
         private ProgressDialog dialog;
-        private DialogFragment resultDialog;
+        private Pair<PairedDevice, String> pairedPair;
 
         /*
          * (non-Javadoc)
@@ -108,7 +104,7 @@ public class PairOutboundActivity extends Activity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             dialog.dismiss();
-            resultDialog.show(getFragmentManager(), "code");
+            Dialogs.onPairingOutbound(pairedPair, PairOutboundActivity.this);
         }
 
         /*
@@ -118,7 +114,7 @@ public class PairOutboundActivity extends Activity {
          */
         @Override
         protected Void doInBackground(String... params) {
-            resultDialog = getPairedDeviceDialog(expand(params[0]));
+            pairedPair = expand(params[0]);
             return null;
         }
 
@@ -153,13 +149,10 @@ public class PairOutboundActivity extends Activity {
                     Utils.debug("wrong URL");
                 }
             } catch (ClientProtocolException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (JSONException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             return null;
@@ -186,43 +179,6 @@ public class PairOutboundActivity extends Activity {
             }
             return decoded.toString();
         }
-
-        private DialogFragment getPairedDeviceDialog(
-                final Pair<PairedDevice, String> device) {
-            return new RetainedDialogFragment() {
-                public Dialog onCreateDialog(Bundle savedInstanceState) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(
-                            PairOutboundActivity.this);
-                    try {
-                        builder.setMessage(getString(R.string.failed_pairing));
-                        if (device != null) {
-                            assignedID = device.second;
-                            savePairing(device, getApplicationContext());
-                            builder.setMessage(String.format(getResources()
-                                    .getString(R.string.successful_pairing,
-                                            device.first.type)));
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    builder.setPositiveButton(android.R.string.ok,
-                            new OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                        int which) {
-                                    // back to main screen
-                                    startActivity(new Intent(
-                                            getApplicationContext(),
-                                            MainActivity.class));
-                                }
-                            });
-                    return builder.create();
-                }
-            };
-        }
     }
 
     private static final String EXPANDER_URL = MainActivity.SHORTENER_URL
@@ -233,6 +189,7 @@ public class PairOutboundActivity extends Activity {
     private static String assignedID;
     private EditText inputCode;
     private List<Integer> randomSeed;
+    private boolean keepKeyboardVisible;
 
     /**
      * Returns the ID that the currently paired outbound device has given to
@@ -259,6 +216,17 @@ public class PairOutboundActivity extends Activity {
             }
         }
         return assignedID;
+    }
+
+    /**
+     * Sets the ID (name) chosen by the user for the device that is currently
+     * being paired as the outbound device.
+     * 
+     * @param assignedID
+     *            the user-chosen device ID (human readable name)
+     */
+    static void setAssignedID(String assignedID) {
+        PairOutboundActivity.assignedID = assignedID;
     }
 
     /*
@@ -331,7 +299,8 @@ public class PairOutboundActivity extends Activity {
             public boolean onEditorAction(TextView v, int actionId,
                     KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    return onSubmitPressed(null);
+                    onSubmitPressed(null);
+                    return keepKeyboardVisible;
                 }
                 return false;
             }
@@ -449,22 +418,26 @@ public class PairOutboundActivity extends Activity {
     }
 
     /**
-     * Called when submit button is pressed.
+     * Called when submit button below the QR code is pressed or after the
+     * pairing code typed by the user has been submitted.
+     * 
+     * <p>
+     * This method also decides whether the soft keyboard should be kept visible
+     * (in case the pairing code typed by the user is not valid).
      * 
      * @param view
      *            the parent view
-     * @return <code>true</code> if the soft keyboard should stay where it is
-     *         (i.e. if an error happened)
      */
-    public boolean onSubmitPressed(View view) {
+    public void onSubmitPressed(View view) {
         String code = inputCode.getText().toString();
         Utils.debug("user submitted %s", code);
         if (code.length() != MAX_SHORTENED_URL_LENGTH) {
             inputCode.setError(getString(R.string.invalidshorturl));
-            return true;
+            keepKeyboardVisible = true;
+        } else {
+            keepKeyboardVisible = false;
         }
-        new CallGooGl().execute(code);
-        return false;
+        new CallGooGlOutbound().execute(code);
     }
 
     private Bitmap generateQRCode(String dataToEncode, int imageViewSize)
@@ -502,7 +475,7 @@ public class PairOutboundActivity extends Activity {
             whitespace = " ";
         }
         builder.append(String.format(" %s %s",
-                MainActivity.capitalize(Build.MANUFACTURER), Build.MODEL));
+                Utils.capitalize(Build.MANUFACTURER), Build.MODEL));
         Utils.debug("stuffing this into the QR code: %s", builder.toString());
         return builder.toString();
     }

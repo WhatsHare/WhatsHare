@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
@@ -215,7 +216,7 @@ public class GCMIntentService extends GCMBaseIntentService {
                 whatshareIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
         
         Notification notification = null;
-        Notification.Builder builder = new Notification.Builder(context)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.notification_icon, 0)
                 .setContentTitle(title)
                 .setContentText(message)
@@ -236,7 +237,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private Notification buildForJellyBean(Notification.Builder builder) {
+    private Notification buildForJellyBean(NotificationCompat.Builder builder) {
         return builder.build();
     }
 

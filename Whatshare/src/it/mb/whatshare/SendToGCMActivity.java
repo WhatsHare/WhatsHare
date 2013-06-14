@@ -21,20 +21,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
 import android.util.Pair;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -45,7 +42,7 @@ import com.google.analytics.tracking.android.EasyTracker;
  * 
  * @author Michele Bonazza
  */
-public class SendToGCMActivity extends Activity {
+public class SendToGCMActivity extends FragmentActivity {
 
     private class CallGCM extends AsyncTask<String, Void, Void> {
 
@@ -188,7 +185,7 @@ public class SendToGCMActivity extends Activity {
                 e.printStackTrace();
             }
             // can't load paired device from file
-            showNoPairedDeviceDialog();
+            Dialogs.noPairedDevice(this);
         } else {
             // user clicked on the notification
             notificationCounter.set(0);
@@ -226,28 +223,6 @@ public class SendToGCMActivity extends Activity {
         return null;
     }
 
-    private void showNoPairedDeviceDialog() {
-        new RetainedDialogFragment() {
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        SendToGCMActivity.this);
-                builder.setMessage(getString(R.string.no_paired_device));
-                builder.setPositiveButton(android.R.string.ok,
-                        new OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                Intent i = new Intent(SendToGCMActivity.this,
-                                        PairOutboundActivity.class);
-                                startActivity(i);
-                            }
-                        });
-                return builder.create();
-            }
-        }.show(getFragmentManager(), "no paired device");
-    }
-
     private void shareViaGCM(Intent intent) {
         String subject = intent.getExtras().getString(Intent.EXTRA_SUBJECT);
         String text = intent.getExtras().getString(Intent.EXTRA_TEXT);
@@ -273,7 +248,7 @@ public class SendToGCMActivity extends Activity {
         String content = getString(R.string.share_success,
                 getString(sharedWhat), outboundDevice.type);
         // @formatter:off
-        Notification.Builder builder = new Notification.Builder(this)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.notification_icon, 0)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -295,7 +270,7 @@ public class SendToGCMActivity extends Activity {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private Notification buildForJellyBean(Notification.Builder builder) {
+    private Notification buildForJellyBean(NotificationCompat.Builder builder) {
         builder.setPriority(Notification.PRIORITY_MAX);
         return builder.build();
     }
