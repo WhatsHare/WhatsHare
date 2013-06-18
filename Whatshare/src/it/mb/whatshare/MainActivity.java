@@ -369,14 +369,22 @@ public class MainActivity extends FragmentActivity {
      * Called when the pair new device menu item (inbound) is pressed.
      */
     public void onNewInboundDevicePressed() {
-        Dialogs.pairInboundInstructions(this);
+        if (Utils.isConnectedToTheInternet(this)) {
+            Dialogs.pairInboundInstructions(this);
+        } else {
+            Dialogs.noInternetConnection(this, R.string.no_internet_pairing);
+        }
     }
 
     /**
      * Called when the pair new device menu item (outbound) is pressed.
      */
     public void onNewOutboundDevicePressed() {
-        showOutboundConfiguration();
+        if (Utils.isConnectedToTheInternet(this)) {
+            showOutboundConfiguration();
+        } else {
+            Dialogs.noInternetConnection(this, R.string.no_internet_pairing);
+        }
     }
 
     @Override

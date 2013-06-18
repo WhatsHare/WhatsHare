@@ -10,9 +10,11 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.net.ConnectivityManager;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -307,6 +309,22 @@ public final class Utils {
         if (s == null || s.length() == 0)
             return "";
         return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    /**
+     * Returns whether this device is currently connected to the Internet.
+     * 
+     * @param context
+     *            the caller activity
+     * @return <code>true</code> if the Internet is reachable from this device
+     *         at this time
+     */
+    public static boolean isConnectedToTheInternet(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null
+                && cm.getActiveNetworkInfo().isAvailable()
+                && cm.getActiveNetworkInfo().isConnected();
     }
 
     /**

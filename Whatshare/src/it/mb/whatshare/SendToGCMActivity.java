@@ -96,51 +96,57 @@ public class SendToGCMActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if ("".equals(registrationID)) {
-            GCMIntentService.registerWithGCM(this);
-            new AsyncTask<Void, Void, Void>() {
+            if (!Utils.isConnectedToTheInternet(this)) {
+                Dialogs.noInternetConnection(this, R.string.no_internet_sending);
+            } else {
+                GCMIntentService.registerWithGCM(this);
+                new AsyncTask<Void, Void, Void>() {
 
-                private ProgressDialog dialog;
+                    private ProgressDialog dialog;
 
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see android.os.AsyncTask#onPreExecute()
-                 */
-                @Override
-                protected void onPreExecute() {
-                    dialog = ProgressDialog.show(SendToGCMActivity.this,
-                            getResources().getString(R.string.please_wait),
-                            getResources()
-                                    .getString(R.string.wait_registration));
-                }
-
-                @Override
-                protected Void doInBackground(Void... params) {
-                    try {
-                        registrationID = GCMIntentService.getRegistrationID();
-                    } catch (CantRegisterWithGCMException e) {
-                        registrationError = e.getMessageID();
+                    /*
+                     * (non-Javadoc)
+                     * 
+                     * @see android.os.AsyncTask#onPreExecute()
+                     */
+                    @Override
+                    protected void onPreExecute() {
+                        dialog = ProgressDialog.show(
+                                SendToGCMActivity.this,
+                                getResources().getString(R.string.please_wait),
+                                getResources().getString(
+                                        R.string.wait_registration));
                     }
-                    return null;
-                }
 
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-                 */
-                @Override
-                protected void onPostExecute(Void result) {
-                    super.onPostExecute(result);
-                    dialog.dismiss();
-                    if (registrationError != -1) {
-                        Dialogs.onRegistrationError(registrationError,
-                                SendToGCMActivity.this);
-                    } else {
-                        onNewIntent(getIntent());
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        try {
+                            registrationID = GCMIntentService
+                                    .getRegistrationID();
+                        } catch (CantRegisterWithGCMException e) {
+                            registrationError = e.getMessageID();
+                        }
+                        return null;
                     }
-                }
-            }.execute();
+
+                    /*
+                     * (non-Javadoc)
+                     * 
+                     * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+                     */
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        super.onPostExecute(result);
+                        dialog.dismiss();
+                        if (registrationError != -1) {
+                            Dialogs.onRegistrationError(registrationError,
+                                    SendToGCMActivity.this);
+                        } else {
+                            onNewIntent(getIntent());
+                        }
+                    }
+                }.execute();
+            }
         }
     }
 
@@ -174,28 +180,32 @@ public class SendToGCMActivity extends FragmentActivity {
     @Override
     protected void onNewIntent(final Intent intent) {
         if (intent.hasExtra(Intent.EXTRA_TEXT)) {
-            // send to paired device if any
-            try {
-                if (outboundDevice == null) {
-                    Pair<PairedDevice, String> paired = loadOutboundPairing(this);
-                    if (paired != null)
-                        outboundDevice = paired.first;
+            if (!Utils.isConnectedToTheInternet(this)) {
+                Dialogs.noInternetConnection(this, R.string.no_internet_sending);
+            } else {
+                // send to paired device if any
+                try {
+                    if (outboundDevice == null) {
+                        Pair<PairedDevice, String> paired = loadOutboundPairing(this);
+                        if (paired != null)
+                            outboundDevice = paired.first;
+                    }
+                    if (outboundDevice != null) {
+                        // share with other device
+                        shareViaGCM(intent);
+                        finish();
+                        return;
+                    }
+                } catch (OptionalDataException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                if (outboundDevice != null) {
-                    // share with other device
-                    shareViaGCM(intent);
-                    finish();
-                    return;
-                }
-            } catch (OptionalDataException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                // can't load paired device from file
+                Dialogs.noPairedDevice(this);
             }
-            // can't load paired device from file
-            Dialogs.noPairedDevice(this);
         } else {
             // user clicked on the notification
             notificationCounter.set(0);

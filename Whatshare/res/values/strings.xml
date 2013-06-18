@@ -23,7 +23,7 @@
     <string name="paired_inbound">Receive from</string>
     <string name="paired_outbound">Send to</string>
     <string name="no_device">No device</string>
-    <string name="new_inbound_instructions">Take a picture of the QR code displayed by the other device\'s WhatsHare app (or by the Chrome Extension)</string>
+    <string name="new_inbound_instructions">Take a picture of the QR code (similar to those below) displayed by the other device\'s WhatsHare app (or by the Chrome Extension)</string>
     <string name="new_outbound_instructions_first_time">Scan this QR code with the other Android device (where Whatsapp is installed).\n Then, type in the resulting code.</string>
     <string name="new_outbound_instructions">Scan this QR code with the other Android device (where Whatsapp is installed).\n Then, type in the resulting code.\n\n WARNING! Pairing a new device will unpair %1$s</string>
     <string name="no_paired_device">You need to pair an Android device first where Whatsapp is installed</string>
@@ -39,10 +39,12 @@
     <string name="wrong_char">letters, numbers, \'-\', \'_\' or whitespaces only</string>
     <string name="id_already_in_use">ID already in use</string>
     <string name="device_paired">Device added%s</string>
+
     <plurals name="added_device">
         <item quantity="one"></item>
         <item quantity="other">\ (%d paired total)</item>
     </plurals>
+
     <string name="add_device">Add new device</string>
     <string name="gcm_registration_error">Couldn\'t register WhatsHare with Google Cloud Messaging platform: %s</string>
     <string name="account_missing">\ you need to setup a Google account for this device in order to use this app.</string>
@@ -50,4 +52,10 @@
     <string name="invalid_sender">\ please file a bug (or subscribe to it) on https://github.com/micheleb/WhatsHare/issues using "Invalid sender" as title.</string>
     <string name="phone_registration_error">\ your device doesn\'t support Google Cloud Messaging, thus WhatsHare can\'t work.</string>
     <string name="unknown_gcm_error">\ something went wrong while contacting Google\'s servers. Pleas try again in a few minutes.</string>
+    <string name="no_internet_connection">This device is not connected to the Internet.\n\nAn Internet connection is needed to %s</string>
+    <string name="no_internet_pairing">\ pair new devices.</string>
+    <string name="no_internet_sending">\ share content with other devices through WhatsHare.</string>
+    <string name="title_activity_about">AboutActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>

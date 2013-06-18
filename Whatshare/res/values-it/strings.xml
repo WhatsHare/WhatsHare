@@ -156,7 +156,7 @@
     <string name="paired_inbound">Ricevi da</string>
     <string name="paired_outbound">Invia a</string>
     <string name="no_device">Nessun dispositivo</string>
-    <string name="new_inbound_instructions">Fotografa il QR code mostrato da WhatsHare sull\'altro dispositivo (o dall\'estensione per Chrome)</string>
+    <string name="new_inbound_instructions">Fotografa il QR code (come quelli qui sotto) mostrato da WhatsHare sull\'altro dispositivo (o dall\'estensione per Chrome)</string>
     <string name="new_outbound_instructions_first_time">Scansiona questo QR code con WhatsHare dall\'altro dispositivo Android (dove è installato Whatsapp).\n Poi, inserisci il codice ottenuto.</string>
     <string name="new_outbound_instructions">Scansiona questo QR code con WhatsHare dall\'altro dispositivo Android (dove è installato Whatsapp).\n Poi, inserisci il codice ottenuto.\n\nATTENZIONE! Quest\'operazione disassocierà %1$s da questo dispositivo</string>
     <string name="no_paired_device">Devi associare un dispositivo che abbia Whatsapp installato prima di poter condividere link o testo con WhatsHare</string>
@@ -182,4 +182,7 @@
     <string name="invalid_sender">\ per favore segnala un bug (o aggiungiti alla lista dei subscribers) su https://github.com/micheleb/WhatsHare/issues usando "Invalid sender" come titolo.</string>
     <string name="phone_registration_error">\ il tuo dispositivo non supporta Google Cloud Messaging, per cui WhatsHare non può funzionare.</string>
     <string name="unknown_gcm_error">\ qualcosa è andato storto mentre si contattavano i server di Google. Per favore riprova fra qualche minuto.</string>  
+    <string name="no_internet_connection">Questo dispositivo non è connesso a Internet.\n\n%s richiede una connessione ad Internet attiva.</string>
+    <string name="no_internet_pairing">Associare nuovi dispositivi</string>
+    <string name="no_internet_sending">Condividere contenuti con altri dispositivi tramite WhatsHare</string>
 </resources>

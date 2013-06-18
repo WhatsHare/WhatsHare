@@ -31,64 +31,67 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
         <service android:name="it.mb.whatshare.GCMIntentService" />
+
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="it.mb.whatshare" />
             </intent-filter>
         </receiver>
-        
+
         <activity
-            android:name=".MainActivity"
+            android:name="it.mb.whatshare.MainActivity"
+            android:configChanges="keyboard|orientation|screenSize|keyboardHidden"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden"
-            
-            android:configChanges="keyboard|orientation|screenSize|keyboardHidden" >
+            android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
         <activity
-            android:name=".PairOutboundActivity"
+            android:name="it.mb.whatshare.PairOutboundActivity"
+            android:configChanges="keyboard|orientation|screenSize|keyboardHidden"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="stateHidden"
-            
-            android:configChanges="keyboard|orientation|screenSize|keyboardHidden" >
+            android:windowSoftInputMode="stateHidden" >
         </activity>
-        
         <activity
-            android:name=".SendToGCMActivity"
-            android:theme="@android:style/Theme.NoDisplay"
+            android:name="it.mb.whatshare.SendToGCMActivity"
             android:clearTaskOnLaunch="true"
-            android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance"
             android:noHistory="true"
-            android:label="@string/app_name" >
+            android:theme="@android:style/Theme.NoDisplay" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        
         <activity
-            android:name=".SendToWhatsappActivity"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:label="@string/app_name" 
+            android:name="it.mb.whatshare.SendToWhatsappActivity"
             android:clearTaskOnLaunch="true"
-            android:launchMode="singleInstance"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
-            android:noHistory="true">
+            android:label="@string/app_name"
+            android:launchMode="singleInstance"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoDisplay" >
+        </activity>
+        <activity
+            android:name="it.mb.whatshare.AboutActivity"
+            android:label="@string/title_activity_about" >
         </activity>
     </application>
 

@@ -145,7 +145,6 @@ public class Dialogs {
      */
     public static void onRegistrationError(final int errorCode,
             final FragmentActivity activity) {
-
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -352,7 +351,10 @@ public class Dialogs {
     public static void pairInboundInstructions(final FragmentActivity activity) {
         DialogFragment dialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
+                View layout = activity.getLayoutInflater().inflate(
+                        R.layout.pair_inbound_instructions, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setView(layout);
                 builder.setMessage(getResources().getString(
                         R.string.new_inbound_instructions));
                 builder.setPositiveButton(android.R.string.ok,
@@ -441,6 +443,37 @@ public class Dialogs {
                 return builder.create();
             }
         }.show(activity.getSupportFragmentManager(), "no paired device");
+    }
+
+    /**
+     * Shows a dialog informing the user that the action she's trying to perform
+     * requires an Internet connection which is not available at the moment.
+     * 
+     * @param activity
+     *            the caller activity
+     * @param whyItsNeeded
+     *            the resource ID within <tt>strings.xml</tt> that explains to
+     *            the user why an Internet connection is needed by the operation
+     */
+    public static void noInternetConnection(final FragmentActivity activity,
+            final int whyItsNeeded) {
+        new PatchedDialogFragment() {
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage(getString(R.string.no_internet_connection,
+                        getString(whyItsNeeded)));
+                builder.setPositiveButton(android.R.string.ok,
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                // just hide dialog
+                            }
+                        });
+                return builder.create();
+            }
+        }.show(activity.getSupportFragmentManager(), "no_internet");
     }
 
 }
