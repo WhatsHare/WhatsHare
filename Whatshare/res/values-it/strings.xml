@@ -142,7 +142,7 @@
     <string name="please_wait">Attendere</string>
     <string name="wait_registration">Registro l\'applicazione per il primo utilizzo&#8230;</string>
     <string name="wait_message">Generazione dell\'ID per la registrazione del dispositivo in corso&#8230;</string>
-    <string name="code_dialog">Inserisci questo codice nel campo di testo della pagina di configurazione dell\'estensione per Chrome:\n\n%1$s\n\nFa\' attenzione alle maiuscole/minuscole!</string>
+    <string name="code_dialog">Inserisci questo codice nella schermata di configurazione di WhatsHare sull'altro dispositivo o nell\'estensione per Chrome:\n\n%1$s\n\nFa\' attenzione alle maiuscole/minuscole!</string>
     <string name="code_dialog_fail">Impossibile generare un ID per questo dispositivo utilizzando il QR code fotografato.\n\nAspetta qualche secondo e riprova!</string>
     <string name="whatsapp_not_installed_title">Whatsapp non è installato</string>
     <string name="whatsapp_not_installed">Per inviare messaggi via Whatsapp è necessario aver installato Whatsapp!</string>
@@ -167,6 +167,7 @@
     <string name="remove_inbound_paired_message">Disassociare %1$s?\n\nWhatshare ignorerà tutti i messaggi provenienti da %1$s</string>
     <string name="remove_outbound_paired_message">Disassociare %1$s?\n\nNon si potranno più condividere messaggi utilizzando Whatsapp installato su %1$s finché non verrà associato di nuovo</string>
     <string name="delete_file_saved_inbound">Rimuovi tutti i dispositivi in ingresso associati</string>
+    <string name="device_id_chooser_title">Scegli un ID per il dispositivo</string>
     <string name="at_least_one_char">almeno 1 carattere</string>
     <string name="wrong_char">solo lettere, numeri, \'-\', \'_\' o spazi</string>
     <string name="id_already_in_use">ID già in uso</string>
