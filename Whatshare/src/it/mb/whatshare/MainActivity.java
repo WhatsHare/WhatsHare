@@ -265,13 +265,6 @@ public class MainActivity extends FragmentActivity {
                 return true;
             }
         });
-        if (!isWhatsappInstalled(this)) {
-            // no inbound device can ever be configured
-            int[] toRemove = { R.id.inbound, R.id.inboundDevices };
-            for (int item : toRemove) {
-                findViewById(item).setVisibility(View.GONE);
-            }
-        }
     }
 
     /*
@@ -463,7 +456,7 @@ public class MainActivity extends FragmentActivity {
                         deviceName.append(keys[i]);
                         space = " ";
                     }
-                    Dialogs.prompForInboundID(deviceName.toString(),
+                    Dialogs.promptForInboundID(deviceName.toString(),
                             sharedSecret, this);
                 } catch (NumberFormatException e) {
                     Dialogs.onQRFail(this);

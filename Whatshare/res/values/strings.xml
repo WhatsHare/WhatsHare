@@ -20,8 +20,8 @@
     <string name="invalidshorturl">Code must be 5 characters/digits</string>
     <string name="successful_pairing">%1$s has been successfully paired!\n\nYou can now use WhatsHare to share content from your %1$s through Whatsapp!</string>
     <string name="failed_pairing">Couldn\'t pair devices, try to take another picture of the QR code in a few seconds!</string>
-    <string name="paired_inbound">Receiving content from</string>
-    <string name="paired_outbound">Sending content to</string>
+    <string name="paired_inbound">Receive from</string>
+    <string name="paired_outbound">Send to</string>
     <string name="no_device">No device</string>
     <string name="new_inbound_instructions">Take a picture of the QR code displayed by the other device\'s WhatsHare app (or by the Chrome Extension)</string>
     <string name="new_outbound_instructions_first_time">Scan this QR code with the other Android device (where Whatsapp is installed).\n Then, type in the resulting code.</string>

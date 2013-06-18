@@ -153,8 +153,8 @@
     <string name="invalidshorturl">Il codice deve contenere 5 caratteri alfanumerici</string>
     <string name="successful_pairing">%1$s è stato associato correttamente!\n\nOra puoi usare WhatsHare per condividere contenuto dal tuo %1$s attraverso Whatsapp!</string>
     <string name="failed_pairing">Impossibile associare i due dispositivi, prova a fotografare di nuovo il QR code!</string>
-    <string name="paired_inbound">Ricezione messaggi da</string>
-    <string name="paired_outbound">Invio messaggi a</string>
+    <string name="paired_inbound">Ricevi da</string>
+    <string name="paired_outbound">Invia a</string>
     <string name="no_device">Nessun dispositivo</string>
     <string name="new_inbound_instructions">Fotografa il QR code mostrato da WhatsHare sull\'altro dispositivo (o dall\'estensione per Chrome)</string>
     <string name="new_outbound_instructions_first_time">Scansiona questo QR code con WhatsHare dall\'altro dispositivo Android (dove è installato Whatsapp).\n Poi, inserisci il codice ottenuto.</string>

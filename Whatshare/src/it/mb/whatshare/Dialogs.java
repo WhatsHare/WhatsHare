@@ -21,6 +21,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
@@ -62,7 +64,7 @@ public class Dialogs {
      *            the caller activity
      */
     public static void onQRFail(final FragmentActivity activity) {
-        DialogFragment failDialog = new DialogFragment() {
+        DialogFragment failDialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 return new AlertDialog.Builder(getActivity())
                         .setMessage(R.string.qr_code_fail)
@@ -99,7 +101,7 @@ public class Dialogs {
     public static void onPairingOutbound(
             final Pair<PairedDevice, String> device,
             final FragmentActivity activity) {
-        new DialogFragment() {
+        new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 try {
@@ -143,7 +145,7 @@ public class Dialogs {
      */
     public static void onObtainPairingCode(final String googl,
             final MainActivity activity) {
-        new DialogFragment() {
+        new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 if (googl != null) {
@@ -183,8 +185,8 @@ public class Dialogs {
 
     /**
      * Shows a dialog to get an ID (name) for the inbound device being paired
-     * and starts a new {@link CallGooGlInbound} action if the chosen name is valid and
-     * not in use.
+     * and starts a new {@link CallGooGlInbound} action if the chosen name is
+     * valid and not in use.
      * 
      * @param deviceType
      *            the model of the device being paired as suggested by the
@@ -194,69 +196,80 @@ public class Dialogs {
      * @param activity
      *            the caller activity
      */
-    public static void prompForInboundID(final String deviceType,
+    public static void promptForInboundID(final String deviceType,
             final int[] sharedSecret, final MainActivity activity) {
-        DialogFragment prompt = new DialogFragment() {
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                final EditText input = new EditText(activity);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                input.setText(deviceType);
-                input.setSelection(deviceType.length());
-                // @formatter:off
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity)
-                    .setTitle(R.string.device_id_chooser_title)
-                    .setView(input)
-                    .setPositiveButton(android.R.string.ok, null);
-                // @formatter:on
-                final AlertDialog alertDialog = builder.create();
-                alertDialog
-                        .setOnShowListener(new DialogInterface.OnShowListener() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
 
-                            @Override
-                            public void onShow(DialogInterface dialog) {
-                                Button b = alertDialog
-                                        .getButton(AlertDialog.BUTTON_POSITIVE);
-                                b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void run() {
+                DialogFragment prompt = new PatchedDialogFragment() {
+                    public Dialog onCreateDialog(Bundle savedInstanceState) {
+                        final EditText input = new EditText(activity);
+                        input.setInputType(InputType.TYPE_CLASS_TEXT);
+                        input.setText(deviceType);
+                        input.setSelection(deviceType.length());
+                        // @formatter:off
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activity)
+                            .setTitle(R.string.device_id_chooser_title)
+                            .setView(input)
+                            .setPositiveButton(android.R.string.ok, null);
+                        // @formatter:on
+                        final AlertDialog alertDialog = builder.create();
+                        alertDialog
+                                .setOnShowListener(new DialogInterface.OnShowListener() {
 
                                     @Override
-                                    public void onClick(View view) {
-                                        input.setError(null);
-                                        String deviceId = input.getText()
-                                                .toString();
-                                        if (!Pattern.matches(
-                                                MainActivity.VALID_DEVICE_ID,
-                                                deviceId)) {
-                                            if (deviceId.length() < 1) {
-                                                input.setError(getResources()
-                                                        .getString(
-                                                                R.string.at_least_one_char));
-                                            } else {
-                                                input.setError(getResources()
-                                                        .getString(
-                                                                R.string.wrong_char));
+                                    public void onShow(DialogInterface dialog) {
+                                        Button b = alertDialog
+                                                .getButton(AlertDialog.BUTTON_POSITIVE);
+                                        b.setOnClickListener(new View.OnClickListener() {
+
+                                            @Override
+                                            public void onClick(View view) {
+                                                input.setError(null);
+                                                String deviceId = input
+                                                        .getText().toString();
+                                                if (!Pattern
+                                                        .matches(
+                                                                MainActivity.VALID_DEVICE_ID,
+                                                                deviceId)) {
+                                                    if (deviceId.length() < 1) {
+                                                        input.setError(getResources()
+                                                                .getString(
+                                                                        R.string.at_least_one_char));
+                                                    } else {
+                                                        input.setError(getResources()
+                                                                .getString(
+                                                                        R.string.wrong_char));
+                                                    }
+                                                } else if (!activity
+                                                        .isValidChoice(deviceId)) {
+                                                    input.setError(getResources()
+                                                            .getString(
+                                                                    R.string.id_already_in_use));
+                                                } else {
+                                                    new CallGooGlInbound(
+                                                            activity, deviceId,
+                                                            deviceType)
+                                                            .execute(sharedSecret);
+                                                    ((InputMethodManager) activity
+                                                            .getSystemService(Context.INPUT_METHOD_SERVICE))
+                                                            .hideSoftInputFromWindow(
+                                                                    input.getWindowToken(),
+                                                                    0);
+                                                    alertDialog.dismiss();
+                                                }
                                             }
-                                        } else if (!activity
-                                                .isValidChoice(deviceId)) {
-                                            input.setError(getResources()
-                                                    .getString(
-                                                            R.string.id_already_in_use));
-                                        } else {
-                                            new CallGooGlInbound(activity, deviceId,
-                                                    deviceType)
-                                                    .execute(sharedSecret);
-                                            ((InputMethodManager) activity
-                                                    .getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-                                                    input.getWindowToken(), 0);
-                                            alertDialog.dismiss();
-                                        }
+                                        });
                                     }
                                 });
-                            }
-                        });
-                return alertDialog;
+                        return alertDialog;
+                    }
+                };
+                prompt.show(activity.getSupportFragmentManager(), "chooseName");
             }
-        };
-        prompt.show(activity.getSupportFragmentManager(), "chooseName");
+        });
     }
 
     /**
@@ -273,7 +286,7 @@ public class Dialogs {
      */
     public static void confirmRemoveOutbound(final PairedDevice outboundDevice,
             final MainActivity activity) {
-        new DialogFragment() {
+        new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
                     AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -306,7 +319,7 @@ public class Dialogs {
      *            the caller activity
      */
     public static void pairInboundInstructions(final FragmentActivity activity) {
-        DialogFragment dialog = new DialogFragment() {
+        DialogFragment dialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage(getResources().getString(
@@ -346,7 +359,7 @@ public class Dialogs {
      */
     public static void confirmUnpairInbound(
             final PairedDevice deviceToBeUnpaired, final MainActivity activity) {
-        new DialogFragment() {
+        new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
                 AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -379,7 +392,7 @@ public class Dialogs {
      *            the caller activity
      */
     public static void noPairedDevice(final FragmentActivity activity) {
-        new DialogFragment() {
+        new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setMessage(getString(R.string.no_paired_device));

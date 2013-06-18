@@ -32,7 +32,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         
-        <service android:name="it.mb.whatshare.GCMIntentService" />
+        <service android:name=".GCMIntentService" />
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
@@ -44,7 +44,7 @@
         </receiver>
         
         <activity
-            android:name="it.mb.whatshare.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden"
@@ -57,7 +57,7 @@
         </activity>
         
         <activity
-            android:name="it.mb.whatshare.PairOutboundActivity"
+            android:name=".PairOutboundActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateHidden"
             
@@ -81,7 +81,7 @@
         </activity>
         
         <activity
-            android:name="it.mb.whatshare.SendToWhatsappActivity"
+            android:name=".SendToWhatsappActivity"
             android:theme="@android:style/Theme.NoDisplay"
             android:label="@string/app_name" 
             android:clearTaskOnLaunch="true"
