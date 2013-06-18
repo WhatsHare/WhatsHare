@@ -9,6 +9,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 /**
+ * A {@link DialogFragment} that uses
+ * {@link FragmentTransaction#commitAllowingStateLoss()} instead of
+ * {@link FragmentTransaction#commit()} to
+ * {@link FragmentTransaction#show(android.support.v4.app.Fragment)} the dialog
+ * fragment.
+ * 
+ * <p>
+ * This class is used to overcome <a
+ * href="https://code.google.com/p/android/issues/detail?id=23761">this bug</a>
+ * in the support package.
+ * 
  * @author Michele Bonazza
  * 
  */

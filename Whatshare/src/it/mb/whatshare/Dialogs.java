@@ -135,6 +135,37 @@ public class Dialogs {
     }
 
     /**
+     * Shows a dialog informing the user about what went wrong while trying to
+     * registrate her device with GCM.
+     * 
+     * @param errorCode
+     *            the error message's resource ID within <tt>strings.xml</tt>
+     * @param activity
+     *            the caller activity
+     */
+    public static void onRegistrationError(final int errorCode,
+            final FragmentActivity activity) {
+
+        new PatchedDialogFragment() {
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage(getString(R.string.gcm_registration_error,
+                        getString(errorCode)));
+                builder.setPositiveButton(android.R.string.ok,
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                // just hide dialog
+                            }
+                        });
+                return builder.create();
+            }
+        }.show(activity.getSupportFragmentManager(), "gcm_error");
+    }
+
+    /**
      * Shows a dialog containing the code received by goo.gl if any, or an error
      * message stating that the pairing operation failed.
      * 

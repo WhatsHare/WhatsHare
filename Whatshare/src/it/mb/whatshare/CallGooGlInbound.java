@@ -65,6 +65,7 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
     private PairedDevice deviceToBePaired;
     private String googl;
     private String registrationID = "";
+    private int registrationError = -1;
 
     /**
      * Creates a new task that will call goo.gl to create a new pairing code for
@@ -107,7 +108,11 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
         dialog.dismiss();
-        Dialogs.onObtainPairingCode(googl, mainActivity);
+        if (registrationError != -1) {
+            Dialogs.onRegistrationError(registrationError, mainActivity);
+        } else {
+            Dialogs.onObtainPairingCode(googl, mainActivity);
+        }
     }
 
     /*
@@ -117,20 +122,25 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
      */
     @Override
     protected Void doInBackground(int[]... params) {
-        registrationID = GCMIntentService.getRegistrationID();
-        String encodedID = encrypt(params[0], registrationID.toCharArray());
-        String encodedAssignedID = encrypt(params[0],
-                String.valueOf(deviceToBePaired.name.hashCode()).toCharArray());
-        Utils.debug(
-                "shortening, this device's encodedID is %s, paired devices's"
-                        + " encodedAssignedID is %s", encodedID,
-                encodedAssignedID);
-        googl = shorten(encodedID, encodedAssignedID);
-        if (googl != null) {
-            googl = googl.substring(googl.lastIndexOf('/') + 1);
-            saveInboundPairing(deviceToBePaired);
+        try {
+            registrationID = GCMIntentService.getRegistrationID();
+            String encodedID = encrypt(params[0], registrationID.toCharArray());
+            String encodedAssignedID = encrypt(params[0],
+                    String.valueOf(deviceToBePaired.name.hashCode())
+                            .toCharArray());
+            Utils.debug(
+                    "shortening, this device's encodedID is %s, paired devices's"
+                            + " encodedAssignedID is %s", encodedID,
+                    encodedAssignedID);
+            googl = shorten(encodedID, encodedAssignedID);
+            if (googl != null) {
+                googl = googl.substring(googl.lastIndexOf('/') + 1);
+                saveInboundPairing(deviceToBePaired);
+            }
+            mainActivity.refreshInboundDevicesList();
+        } catch (CantRegisterWithGCMException e) {
+            registrationError = e.getMessageID();
         }
-        mainActivity.refreshInboundDevicesList();
         return null;
     }
 

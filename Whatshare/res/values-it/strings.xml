@@ -176,4 +176,10 @@
         <item quantity="other">\ (%d associati in totale)</item>
     </plurals>
     <string name="add_device">Aggiungi nuovo dispositivo</string>
+    <string name="gcm_registration_error">Impossibile registrare WhatsHare con Google Cloud Messaging: %s</string>
+    <string name="account_missing">\ devi impostare un account Google per questo dispositivo per poter utilizzare WhatsHare.</string>
+    <string name="too_many_registrations">\ troppe applicazioni registrate per questo dispositivo.\n\nPer utilizzare WhatsHare, disinstalla prima qualche applicazione che utilizzi i servizi di messaggistica.</string>
+    <string name="invalid_sender">\ per favore segnala un bug (o aggiungiti alla lista dei subscribers) su https://github.com/micheleb/WhatsHare/issues usando "Invalid sender" come titolo.</string>
+    <string name="phone_registration_error">\ il tuo dispositivo non supporta Google Cloud Messaging, per cui WhatsHare non può funzionare.</string>
+    <string name="unknown_gcm_error">\ qualcosa è andato storto mentre si contattavano i server di Google. Per favore riprova fra qualche minuto.</string>  
 </resources>

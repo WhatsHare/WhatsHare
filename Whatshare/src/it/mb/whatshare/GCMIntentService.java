@@ -13,8 +13,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
@@ -46,6 +48,18 @@ public class GCMIntentService extends GCMBaseIntentService {
      */
     private static final Lock REGISTRATION_LOCK = new ReentrantLock();
     private static final String PROJECT_SERVER_ID = "213874322054";
+    private static final String UNKNOWN_GCM_ERROR = "UNKNOWN_GCM_ERROR";
+    private static final Map<String, Integer> ERROR_CODES = new HashMap<String, Integer>() {
+        private static final long serialVersionUID = 649852390172936228L;
+
+        {
+            put("ACCOUNT_MISSING", R.string.account_missing);
+            put("TOO_MANY_REGISTRATIONS", R.string.too_many_registrations);
+            put("INVALID_SENDER", R.string.invalid_sender);
+            put("PHONE_REGISTRATION_ERROR", R.string.phone_registration_error);
+            put(UNKNOWN_GCM_ERROR, R.string.unknown_gcm_error);
+        }
+    };
 
     /**
      * Condition that is released when {@link GCMIntentService} is done with the
@@ -55,11 +69,10 @@ public class GCMIntentService extends GCMBaseIntentService {
             .newCondition();
 
     private static AtomicInteger counter = new AtomicInteger();
-
     private static String registrationID = "";
+    private static int errorID = -1;
 
     private Set<String> senderWhitelist = new HashSet<String>();
-
     private long lastCheckedWhitelist;
 
     /**
@@ -89,19 +102,27 @@ public class GCMIntentService extends GCMBaseIntentService {
      * device one if it hasn't done so before.
      * 
      * @return the registration ID
+     * @throws CantRegisterWithGCMException
+     *             in case an error message is received from GCM when trying to
+     *             register this device
      */
-    static String getRegistrationID() {
+    static String getRegistrationID() throws CantRegisterWithGCMException {
         if ("".equals(registrationID)) {
             try {
                 REGISTRATION_LOCK.lock();
                 // check again within lock
-                if ("".equals(registrationID)) {
+                if ("".equals(registrationID) && errorID != -1) {
                     REGISTERED.await();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
                 REGISTRATION_LOCK.unlock();
+                if (errorID != -1) {
+                    int error = errorID;
+                    errorID = -1;
+                    throw new CantRegisterWithGCMException(error);
+                }
             }
         }
         return registrationID;
@@ -157,7 +178,20 @@ public class GCMIntentService extends GCMBaseIntentService {
      */
     @Override
     protected void onError(Context arg0, String arg1) {
-        // ahem...
+        try {
+            REGISTRATION_LOCK.lock();
+            Utils.debug("Cannot register: %s", arg1);
+            registrationID = "";
+            errorID = ERROR_CODES.get(UNKNOWN_GCM_ERROR);
+            if (arg1 != null) {
+                Integer error = ERROR_CODES.get(arg1);
+                if (error != null)
+                    errorID = error;
+            }
+            REGISTERED.signalAll();
+        } finally {
+            REGISTRATION_LOCK.unlock();
+        }
     }
 
     /*

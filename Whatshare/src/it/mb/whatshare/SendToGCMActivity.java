@@ -89,6 +89,7 @@ public class SendToGCMActivity extends FragmentActivity {
             .compile("\\w+\\:(.+)");
     private static AtomicInteger notificationCounter = new AtomicInteger();
     private String registrationID = "";
+    private int registrationError = -1;
     private PairedDevice outboundDevice;
 
     @Override
@@ -115,7 +116,11 @@ public class SendToGCMActivity extends FragmentActivity {
 
                 @Override
                 protected Void doInBackground(Void... params) {
-                    registrationID = GCMIntentService.getRegistrationID();
+                    try {
+                        registrationID = GCMIntentService.getRegistrationID();
+                    } catch (CantRegisterWithGCMException e) {
+                        registrationError = e.getMessageID();
+                    }
                     return null;
                 }
 
@@ -128,7 +133,12 @@ public class SendToGCMActivity extends FragmentActivity {
                 protected void onPostExecute(Void result) {
                     super.onPostExecute(result);
                     dialog.dismiss();
-                    onNewIntent(getIntent());
+                    if (registrationError != -1) {
+                        Dialogs.onRegistrationError(registrationError,
+                                SendToGCMActivity.this);
+                    } else {
+                        onNewIntent(getIntent());
+                    }
                 }
             }.execute();
         }

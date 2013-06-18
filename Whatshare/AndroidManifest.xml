@@ -12,7 +12,7 @@
         android:name="it.mb.whatshare.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="my_app_package.permission.C2D_MESSAGE" />
+    <uses-permission android:name="it.mb.whatshare.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- App receives GCM messages. -->
@@ -32,7 +32,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         
-        <service android:name=".GCMIntentService" />
+        <service android:name="it.mb.whatshare.GCMIntentService" />
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
