@@ -267,19 +267,6 @@ public class MainActivity extends FragmentActivity {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.menu_delete_saved_inbound).setVisible(
-                isWhatsappInstalled(this));
-        return true;
-    }
-
     /**
      * Removes the currently configured outbound device and updates both the
      * current layout and the configuration file.
@@ -335,6 +322,9 @@ public class MainActivity extends FragmentActivity {
         switch (item.getItemId()) {
         case R.id.menu_delete_saved_inbound:
             onDeleteSavedInboundPressed();
+            break;
+        case R.id.about:
+            Dialogs.showAbout(this);
             break;
         }
         return true;
@@ -550,12 +540,10 @@ public class MainActivity extends FragmentActivity {
      */
     ArrayAdapter<String> getListAdapter() {
         List<String> deviceNames = new ArrayList<String>();
-        if (isWhatsappInstalled(this)) {
-            inboundDevices = loadInboundPairing();
-            Utils.debug("%d device(s)", inboundDevices.size());
-            for (PairedDevice device : inboundDevices) {
-                deviceNames.add(device.name);
-            }
+        inboundDevices = loadInboundPairing();
+        Utils.debug("%d device(s)", inboundDevices.size());
+        for (PairedDevice device : inboundDevices) {
+            deviceNames.add(device.name);
         }
         if (adapter == null) {
             adapter = new ArrayAdapter<String>(this,

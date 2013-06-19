@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.mb.whatshare"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="3"
+    android:versionName="1.1.1" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -105,10 +105,6 @@
             android:launchMode="singleInstance"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay" >
-        </activity>
-        <activity
-            android:name="it.mb.whatshare.AboutActivity"
-            android:label="@string/title_activity_about" >
         </activity>
     </application>
 

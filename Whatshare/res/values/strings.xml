@@ -177,7 +177,8 @@
     <string name="no_internet_connection">This device is not connected to the Internet.\n\nAn Internet connection is needed to %s</string>
     <string name="no_internet_pairing">\ pair new devices.</string>
     <string name="no_internet_sending">\ share content with other devices through WhatsHare.</string>
-    <string name="title_activity_about">AboutActivity</string>
-    <string name="hello_world">Hello world!</string>
-
+    <string name="title_activity_about">About</string>
+    <string name="title_about_dialog">WhatsHare %s</string>
+    <string name="build_date_about">Built on %s</string>
+    <string name="description_about_dialog"><a href="https://github.com/micheleb/WhatsHare">Home page on GitHub</a>.\n\n\u00A9 2013 <a href="mailto:michele.bonazza@gmail.com">Michele Bonazza</a>\n\nSmartphone icon modified from G. Hagedorn\'s [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a></string>
 </resources>

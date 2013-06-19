@@ -172,18 +172,27 @@
     <string name="wrong_char">solo lettere, numeri, \'-\', \'_\' o spazi</string>
     <string name="id_already_in_use">ID già in uso</string>
     <string name="device_paired">Dispositivo aggiunto%s</string>
+
     <plurals name="added_device">
         <item quantity="one"></item>
         <item quantity="other">\ (%d associati in totale)</item>
     </plurals>
+
     <string name="add_device">Aggiungi nuovo dispositivo</string>
     <string name="gcm_registration_error">Impossibile registrare WhatsHare con Google Cloud Messaging: %s</string>
     <string name="account_missing">\ devi impostare un account Google per questo dispositivo per poter utilizzare WhatsHare.</string>
     <string name="too_many_registrations">\ troppe applicazioni registrate per questo dispositivo.\n\nPer utilizzare WhatsHare, disinstalla prima qualche applicazione che utilizzi i servizi di messaggistica.</string>
     <string name="invalid_sender">\ per favore segnala un bug (o aggiungiti alla lista dei subscribers) su https://github.com/micheleb/WhatsHare/issues usando "Invalid sender" come titolo.</string>
     <string name="phone_registration_error">\ il tuo dispositivo non supporta Google Cloud Messaging, per cui WhatsHare non può funzionare.</string>
-    <string name="unknown_gcm_error">\ qualcosa è andato storto mentre si contattavano i server di Google. Per favore riprova fra qualche minuto.</string>  
+    <string name="unknown_gcm_error">\ qualcosa è andato storto mentre si contattavano i server di Google. Per favore riprova fra qualche minuto.</string>
     <string name="no_internet_connection">Questo dispositivo non è connesso a Internet.\n\n%s richiede una connessione ad Internet attiva.</string>
     <string name="no_internet_pairing">Associare nuovi dispositivi</string>
     <string name="no_internet_sending">Condividere contenuti con altri dispositivi tramite WhatsHare</string>
+    <string name="title_activity_about">Informazioni</string>
+    <string name="title_about_dialog">WhatsHare %s</string>
+    <string name="description_about_dialog"><a href="https://github.com/micheleb/WhatsHare">Home page su GitHub</a>.\n\n\u00A9 2013 <a href="mailto:michele.bonazza@gmail.com">Michele Bonazza</a>\n\nIcona dello smartphone creata a partire da quella di G. Hagedorn [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a></string>
+    <string name="build_date_about">Creato il %s</string>
+    <string name="app_name">Barcode Scanner</string>
+    <string name="action_settings">Impostazioni</string>
+
 </resources>

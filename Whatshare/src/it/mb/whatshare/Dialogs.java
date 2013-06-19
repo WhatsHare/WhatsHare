@@ -7,7 +7,10 @@ package it.mb.whatshare;
 import it.mb.whatshare.MainActivity.PairedDevice;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.json.JSONException;
 
@@ -19,6 +22,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,11 +31,13 @@ import android.os.Looper;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
+import android.text.method.LinkMovementMethod;
 import android.util.Pair;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -476,4 +483,72 @@ public class Dialogs {
         }.show(activity.getSupportFragmentManager(), "no_internet");
     }
 
+    /**
+     * Shows the about screen.
+     * 
+     * @param activity
+     *            the caller activity
+     */
+    public static void showAbout(final FragmentActivity activity) {
+        DialogFragment dialog = new PatchedDialogFragment() {
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                View layout = activity.getLayoutInflater().inflate(
+                        R.layout.about, null);
+                String version = "alpha";
+                try {
+                    version = activity.getPackageManager().getPackageInfo(
+                            activity.getPackageName(), 0).versionName;
+                } catch (NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+                ((TextView) layout.findViewById(R.id.title)).setText(activity
+                        .getResources().getString(R.string.title_about_dialog,
+                                version));
+                ((TextView) layout.findViewById(R.id.build_date))
+                        .setText(activity.getResources().getString(
+                                R.string.build_date_about,
+                                getBuildDate(activity)));
+                // make links clickable
+                ((TextView) layout.findViewById(R.id.description))
+                        .setMovementMethod(LinkMovementMethod.getInstance());
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setView(layout);
+                builder.setPositiveButton(android.R.string.ok,
+                        new OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                // just hide dialog
+                            }
+                        });
+                return builder.create();
+            }
+        };
+        dialog.show(activity.getSupportFragmentManager(), "about");
+    }
+
+    private static String getBuildDate(final Activity activity) {
+        String buildDate = "";
+        ZipFile zf = null;
+        try {
+            ApplicationInfo ai = activity.getPackageManager()
+                    .getApplicationInfo(activity.getPackageName(), 0);
+            zf = new ZipFile(ai.sourceDir);
+            ZipEntry ze = zf.getEntry("classes.dex");
+            long time = ze.getTime();
+            buildDate = SimpleDateFormat.getInstance().format(
+                    new java.util.Date(time));
+
+        } catch (Exception e) {} finally {
+            if (zf != null) {
+                try {
+                    zf.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return buildDate;
+    }
 }
