@@ -258,7 +258,7 @@ public class SendToGCMActivity extends FragmentActivity {
 
     @SuppressWarnings("deprecation")
     private void showNotification(int sharedWhat) {
-        String title = getString(R.string.app_name);
+        String title = getString(R.string.whatshare);
         Intent onNotificationDiscarded = new Intent(this,
                 SendToGCMActivity.class);
         PendingIntent notificationIntent = PendingIntent.getActivity(this, 0,

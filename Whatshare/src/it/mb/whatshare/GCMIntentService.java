@@ -237,7 +237,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     @SuppressWarnings("deprecation")
     public void generateNotification(Context context, String message) {
         // @formatter:off
-        String title = context.getString(R.string.app_name);
+        String title = context.getString(R.string.whatshare);
         // setAction is called so filterEquals() always returns false for all
         // our intents
         Intent whatshareIntent = new Intent(context,
