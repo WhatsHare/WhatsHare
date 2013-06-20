@@ -144,7 +144,7 @@
     <string name="wait_message">Generazione dell\'ID per la registrazione del dispositivo in corso&#8230;</string>
     <string name="code_dialog">Inserisci questo codice nella schermata di configurazione di WhatsHare sull\'altro dispositivo/estensione per Chrome:</string>
     <string name="code_dialog_reminder">Fa\' attenzione alle maiuscole/minuscole!</string>
-    <string name="code_dialog_fail">Impossibile generare un ID per questo dispositivo utilizzando il QR code fotografato.\n\nAspetta qualche secondo e riprova!</string>
+    <string name="code_dialog_fail">Impossibile generare un ID per questo dispositivo utilizzando il QR code fotografato.\n\nI server di Google potrebbero essere sovraccarichi, aspetta qualche secondo e riprova!</string>
     <string name="whatsapp_not_installed_title">Whatsapp non è installato</string>
     <string name="whatsapp_not_installed">Per inviare messaggi via Whatsapp è necessario aver installato Whatsapp!</string>
     <string name="whatsapp_not_installed_dont_mind">Capito, non ricordarmelo più</string>

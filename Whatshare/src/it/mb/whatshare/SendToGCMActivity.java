@@ -188,6 +188,7 @@ public class SendToGCMActivity extends FragmentActivity {
      */
     @Override
     protected void onNewIntent(final Intent intent) {
+        tracker = GoogleAnalytics.getInstance(this).getDefaultTracker();
         if (intent.hasExtra(Intent.EXTRA_TEXT)) {
             if (!Utils.isConnectedToTheInternet(this)) {
                 Dialogs.noInternetConnection(this, R.string.no_internet_sending);

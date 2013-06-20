@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.mb.whatshare"
-    android:versionCode="5"
-    android:versionName="1.1.3" >
+    android:versionCode="6"
+    android:versionName="1.1.4" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -68,6 +68,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity 
+            android:name="com.google.zxing.client.android.HelpActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
         <activity
             android:name="it.mb.whatshare.PairOutboundActivity"

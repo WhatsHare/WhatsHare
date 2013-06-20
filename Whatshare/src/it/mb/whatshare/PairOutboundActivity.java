@@ -250,7 +250,6 @@ public class PairOutboundActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tracker = GoogleAnalytics.getInstance(this).getDefaultTracker();
         onNewIntent(getIntent());
     }
 
@@ -261,6 +260,7 @@ public class PairOutboundActivity extends FragmentActivity {
      */
     @Override
     protected void onNewIntent(Intent intent) {
+        tracker = GoogleAnalytics.getInstance(this).getDefaultTracker();
         showPairingLayout();
     }
 

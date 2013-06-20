@@ -34,6 +34,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.util.Pair;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -74,7 +75,8 @@ public class Dialogs {
     public static void onQRFail(final FragmentActivity activity) {
         DialogFragment failDialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                return new AlertDialog.Builder(getActivity())
+                return new AlertDialog.Builder(new ContextThemeWrapper(
+                        activity, R.style.DialogTheme))
                         .setMessage(R.string.qr_code_fail)
                         .setPositiveButton(R.string.qr_code_retry,
                                 new OnClickListener() {
@@ -111,7 +113,8 @@ public class Dialogs {
             final FragmentActivity activity) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        new ContextThemeWrapper(activity, R.style.DialogTheme));
                 try {
                     builder.setMessage(getString(R.string.failed_pairing));
                     if (device != null) {
@@ -155,7 +158,8 @@ public class Dialogs {
             final FragmentActivity activity) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        new ContextThemeWrapper(activity, R.style.DialogTheme));
                 builder.setMessage(getString(R.string.gcm_registration_error,
                         getString(errorCode)));
                 builder.setPositiveButton(android.R.string.ok,
@@ -185,9 +189,12 @@ public class Dialogs {
             final MainActivity activity) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                ContextThemeWrapper themeWrapper = new ContextThemeWrapper(
+                        activity, R.style.DialogTheme);
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        themeWrapper);
                 if (googl != null) {
-                    View layout = activity.getLayoutInflater().inflate(
+                    View layout = View.inflate(themeWrapper,
                             R.layout.pairing_code_dialog, null);
                     TextView message = (TextView) layout
                             .findViewById(R.id.pairingCode);
@@ -249,12 +256,14 @@ public class Dialogs {
             public void run() {
                 DialogFragment prompt = new PatchedDialogFragment() {
                     public Dialog onCreateDialog(Bundle savedInstanceState) {
-                        final EditText input = new EditText(activity);
+                        ContextThemeWrapper themeWrapper = new ContextThemeWrapper(
+                                activity, R.style.DialogTheme);
+                        final EditText input = new EditText(themeWrapper);
                         input.setInputType(InputType.TYPE_CLASS_TEXT);
                         input.setText(deviceType);
                         input.setSelection(deviceType.length());
                         // @formatter:off
-                        AlertDialog.Builder builder = new AlertDialog.Builder(activity)
+                        AlertDialog.Builder builder = new AlertDialog.Builder(themeWrapper)
                             .setTitle(R.string.device_id_chooser_title)
                             .setView(input)
                             .setPositiveButton(android.R.string.ok, null);
@@ -333,8 +342,8 @@ public class Dialogs {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
-                    AlertDialog.Builder builder = new AlertDialog.Builder(
-                           activity)
+                    AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(
+                        activity, R.style.DialogTheme))
                         .setMessage(
                             getResources().getString(
                                     R.string.remove_outbound_paired_message,
@@ -365,9 +374,12 @@ public class Dialogs {
     public static void pairInboundInstructions(final FragmentActivity activity) {
         DialogFragment dialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                View layout = activity.getLayoutInflater().inflate(
+                ContextThemeWrapper themeWrapper = new ContextThemeWrapper(
+                        activity, R.style.DialogTheme);
+                View layout = View.inflate(themeWrapper,
                         R.layout.pair_inbound_instructions, null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        themeWrapper);
                 builder.setView(layout);
                 ((TextView) layout.findViewById(R.id.instructions))
                         .setText(getResources().getString(
@@ -410,8 +422,8 @@ public class Dialogs {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        activity)
+                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(
+                        activity, R.style.DialogTheme))
                     .setMessage(
                         getResources().getString(
                                 R.string.remove_inbound_paired_message,
@@ -442,7 +454,8 @@ public class Dialogs {
     public static void noPairedDevice(final FragmentActivity activity) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        new ContextThemeWrapper(activity, R.style.DialogTheme));
                 builder.setMessage(getString(R.string.no_paired_device));
                 builder.setPositiveButton(android.R.string.ok,
                         new OnClickListener() {
@@ -474,7 +487,8 @@ public class Dialogs {
             final int whyItsNeeded) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        new ContextThemeWrapper(activity, R.style.DialogTheme));
                 builder.setMessage(getString(R.string.no_internet_connection,
                         getString(whyItsNeeded)));
                 builder.setPositiveButton(android.R.string.ok,
@@ -500,8 +514,9 @@ public class Dialogs {
     public static void showAbout(final FragmentActivity activity) {
         DialogFragment dialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                View layout = activity.getLayoutInflater().inflate(
-                        R.layout.about, null);
+                ContextThemeWrapper themeWrapper = new ContextThemeWrapper(
+                        activity, R.style.DialogTheme);
+                View layout = View.inflate(themeWrapper, R.layout.about, null);
                 String version = "alpha";
                 try {
                     version = activity.getPackageManager().getPackageInfo(
@@ -519,7 +534,8 @@ public class Dialogs {
                 // make links clickable
                 ((TextView) layout.findViewById(R.id.description))
                         .setMovementMethod(LinkMovementMethod.getInstance());
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        themeWrapper);
                 builder.setView(layout);
                 builder.setPositiveButton(android.R.string.ok,
                         new OnClickListener() {

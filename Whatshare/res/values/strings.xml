@@ -135,7 +135,7 @@
     <string name="wait_message">Generating unique code for pairing this device&#8230;</string>
     <string name="code_dialog">Type this code on the other device or in the Chrome Extension\'s text field:</string>
     <string name="code_dialog_reminder">Code is case-sensitive (upper/lower case does matter!)</string>
-    <string name="code_dialog_fail">Couldn\'t generate an ID for this device using the QR code.\n\nPlease wait a couple of seconds and try again.</string>
+    <string name="code_dialog_fail">Couldn\'t generate an ID for this device using the QR code.\n\nGoogle servers may be under heavy load, please wait a couple of seconds and try again.</string>
     <string name="whatsapp_not_installed_title">Whatsapp not installed</string>
     <string name="whatsapp_not_installed">To send messages through Whatsapp, Whatsapp needs to be installed!</string>
     <string name="whatsapp_not_installed_dont_mind">Got it, stop telling me</string>
