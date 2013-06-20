@@ -170,7 +170,7 @@
     <string name="delete_file_saved_inbound">Rimuovi tutti i dispositivi in ingresso associati</string>
     <string name="device_id_chooser_title">Scegli un ID per il dispositivo</string>
     <string name="at_least_one_char">almeno 1 carattere</string>
-    <string name="wrong_char">solo lettere, numeri, \'-\', \'_\' o spazi</string>
+    <string name="wrong_char">max 30 caratteri, solo lettere, cifre, \'-\', \'_\' o spazi</string>
     <string name="id_already_in_use">ID già in uso</string>
     <string name="device_paired">Dispositivo aggiunto%s</string>
 

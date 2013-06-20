@@ -32,6 +32,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 
 /**
  * The only activity: it can be created when tapping on a notification (and an
@@ -145,14 +147,9 @@ public class MainActivity extends FragmentActivity {
      */
     static final String WHATSAPP_PACKAGE = "com.whatsapp";
     /**
-     * The API key for the Android app.
-     */
-    static final String API_KEY = "AIzaSyDrxJwFE70m3yXgUCkao1YSmVx5K_KDfCg";
-    /**
      * Where Google shortener is at.
      */
-    static final String SHORTENER_URL = "https://www.googleapis.com/urlshortener/v1/url?key="
-            + API_KEY;
+    static final String SHORTENER_URL = "https://www.googleapis.com/urlshortener/v1/url?key=%s";
     /**
      * The number of random keys used to encrypt messages with.
      */
@@ -169,6 +166,8 @@ public class MainActivity extends FragmentActivity {
     private PairedDevice outboundDevice, deviceToBeUnpaired;
     private List<PairedDevice> inboundDevices = new ArrayList<PairedDevice>();
     private ArrayAdapter<String> adapter;
+    private Tracker tracker;
+    private GoogleAnalytics analytics;
 
     /*
      * (non-Javadoc)
@@ -203,6 +202,7 @@ public class MainActivity extends FragmentActivity {
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        tracker.sendEvent("ui", "button_press", "unpair", 0L);
         Dialogs.confirmUnpairInbound(deviceToBeUnpaired, this);
         return super.onContextItemSelected(item);
     }
@@ -324,6 +324,7 @@ public class MainActivity extends FragmentActivity {
             onDeleteSavedInboundPressed();
             break;
         case R.id.about:
+            tracker.sendEvent("ui", "button_press", "about", 0L);
             Dialogs.showAbout(this);
             break;
         }
@@ -343,6 +344,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void onDeleteSavedInboundPressed() {
+        tracker.sendEvent("ui", "button_press", "delete_all_inbound", 0L);
         Utils.debug("deleting inbound devices... %s", getApplicationContext()
                 .deleteFile(INBOUND_DEVICES_FILENAME) ? "success" : "fail");
         inboundDevices = new ArrayList<PairedDevice>();
@@ -360,8 +362,10 @@ public class MainActivity extends FragmentActivity {
      */
     public void onNewInboundDevicePressed() {
         if (Utils.isConnectedToTheInternet(this)) {
+            tracker.sendEvent("ui", "button_press", "add_inbound", 0L);
             Dialogs.pairInboundInstructions(this);
         } else {
+            tracker.sendEvent("ui", "button_press", "add_inbound", -1L);
             Dialogs.noInternetConnection(this, R.string.no_internet_pairing);
         }
     }
@@ -371,8 +375,10 @@ public class MainActivity extends FragmentActivity {
      */
     public void onNewOutboundDevicePressed() {
         if (Utils.isConnectedToTheInternet(this)) {
+            tracker.sendEvent("ui", "button_press", "add_outbound", 0L);
             showOutboundConfiguration();
         } else {
+            tracker.sendEvent("ui", "button_press", "add_outbound", -1L);
             Dialogs.noInternetConnection(this, R.string.no_internet_pairing);
         }
     }
@@ -380,6 +386,10 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        analytics = GoogleAnalytics.getInstance(this);
+        tracker = analytics.getTracker(getResources().getString(
+                R.string.ga_trackingId));
+        analytics.setDefaultTracker(tracker);
         // start the registration process if needed
         GCMIntentService.registerWithGCM(this);
         View menu = getLayoutInflater().inflate(R.layout.menu, null);
@@ -454,11 +464,15 @@ public class MainActivity extends FragmentActivity {
                         deviceName.append(keys[i]);
                         space = " ";
                     }
+                    tracker.sendEvent("qr", "result", "scan_ok", 0L);
                     Dialogs.promptForInboundID(deviceName.toString(),
                             sharedSecret, this);
                 } catch (NumberFormatException e) {
+                    tracker.sendEvent("qr", "result", "scan_fail", 0L);
                     Dialogs.onQRFail(this);
                 }
+            } else if (resultCode == RESULT_CANCELED) {
+                tracker.sendEvent("qr", "result", "scan_canceled", 0L);
             }
         }
     }

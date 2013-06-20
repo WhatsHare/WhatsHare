@@ -35,6 +35,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Pair;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 
 /**
  * Activity called when sharing content from this device to be sent to the
@@ -68,7 +70,12 @@ public class SendToGCMActivity extends FragmentActivity {
                                 outboundDevice.name, JSONObject.quote(text),
                                 JSONObject.quote(assignedID))));
                 post.setHeader("Content-Type", "application/json");
-                post.setHeader("Authorization", "key=" + MainActivity.API_KEY);
+                post.setHeader(
+                        "Authorization",
+                        "key="
+                                + SendToGCMActivity.this.getResources()
+                                        .getString(
+                                                R.string.android_shortener_key));
                 String response = new DefaultHttpClient().execute(post,
                         new BasicResponseHandler());
                 Utils.debug("response is %s", response);
@@ -91,10 +98,12 @@ public class SendToGCMActivity extends FragmentActivity {
     private String registrationID = "";
     private int registrationError = -1;
     private PairedDevice outboundDevice;
+    private Tracker tracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        tracker = GoogleAnalytics.getInstance(this).getDefaultTracker();
         if ("".equals(registrationID)) {
             if (!Utils.isConnectedToTheInternet(this)) {
                 Dialogs.noInternetConnection(this, R.string.no_internet_sending);
@@ -204,6 +213,8 @@ public class SendToGCMActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
                 // can't load paired device from file
+                tracker.sendEvent("intent", "send_to_gcm", "no_paired_device",
+                        0L);
                 Dialogs.noPairedDevice(this);
             }
         } else {
@@ -253,6 +264,8 @@ public class SendToGCMActivity extends FragmentActivity {
                 : R.string.selection;
         Utils.debug("sharing with %s this: '%s'", outboundDevice.type, text);
         new CallGCM().execute(text);
+        tracker.sendEvent("gcm", "share", sharedWhat == R.string.link ? "link"
+                : "text", 0L);
         showNotification(sharedWhat);
     }
 

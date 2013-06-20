@@ -145,7 +145,10 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
     }
 
     private String shorten(String encodedID, String encodedAssignedID) {
-        HttpPost post = new HttpPost(MainActivity.SHORTENER_URL);
+        HttpPost post = new HttpPost(String.format(
+                MainActivity.SHORTENER_URL,
+                mainActivity.getResources().getString(
+                        R.string.android_shortener_key)));
         String shortURL = null;
         int tries = 0;
         try {

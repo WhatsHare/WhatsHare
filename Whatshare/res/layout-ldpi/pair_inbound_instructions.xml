@@ -11,6 +11,6 @@
             android:layout_margin="12dp"
             android:drawableBottom="@drawable/qr_example"
             android:drawablePadding="12dp"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
 </ScrollView>

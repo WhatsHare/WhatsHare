@@ -159,7 +159,7 @@
     <string name="delete_file_saved_inbound">Delete all inbound pairings</string>
     <string name="device_id_chooser_title">Choose an ID for the device</string>
     <string name="at_least_one_char">must be at least 1 character long</string>
-    <string name="wrong_char">letters, numbers, \'-\', \'_\' or whitespaces only</string>
+    <string name="wrong_char">max 30 chars, digits, letters, \'-\', \'_\' or whitespaces only</string>
     <string name="id_already_in_use">ID already in use</string>
     <string name="device_paired">Device added%s</string>
 

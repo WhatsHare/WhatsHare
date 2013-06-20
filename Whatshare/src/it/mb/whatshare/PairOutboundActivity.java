@@ -51,6 +51,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -119,7 +121,10 @@ public class PairOutboundActivity extends FragmentActivity {
         }
 
         private Pair<PairedDevice, String> expand(String url) {
-            HttpGet get = new HttpGet(String.format(EXPANDER_URL, url));
+            HttpGet get = new HttpGet(String.format(
+                    EXPANDER_URL,
+                    PairOutboundActivity.this.getResources().getString(
+                            R.string.android_shortener_key), url));
             String response;
             try {
                 response = new DefaultHttpClient().execute(get,
@@ -138,19 +143,26 @@ public class PairOutboundActivity extends FragmentActivity {
                             domain, sum, model, assignedID, id);
                     if (checksum(domain, sum)) {
                         Utils.debug("Checksum ok!");
+                        tracker.sendEvent("googl", "parse_expanded", "ok", 0L);
                         return new Pair<PairedDevice, String>(
                                 new PairedDevice(decodeId(id),
                                         URLDecoder.decode(model, "UTF-8")),
                                 decodeId(assignedID));
                     } else {
+                        tracker.sendEvent("googl", "parse_expanded",
+                                "bad_checksum", 0L);
                         Utils.debug("Checksum bad");
                     }
                 } else {
+                    tracker.sendEvent("googl", "parse_expanded", "wrong_url",
+                            0L);
                     Utils.debug("wrong URL");
                 }
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                tracker.sendEvent("googl", "parse_expanded",
+                        "ioexception " + e.getMessage(), 0L);
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -189,6 +201,7 @@ public class PairOutboundActivity extends FragmentActivity {
     private static String assignedID;
     private EditText inputCode;
     private List<Integer> randomSeed;
+    private Tracker tracker;
     private boolean keepKeyboardVisible;
 
     /**
@@ -237,6 +250,7 @@ public class PairOutboundActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        tracker = GoogleAnalytics.getInstance(this).getDefaultTracker();
         onNewIntent(getIntent());
     }
 
@@ -255,9 +269,8 @@ public class PairOutboundActivity extends FragmentActivity {
         setContentView(view);
         String paired = getOutboundPaired();
         if (paired != null) {
-            ((TextView) findViewById(R.id.qr_instructions)).setText(String
-                    .format(getString(R.string.new_outbound_instructions),
-                            paired));
+            ((TextView) findViewById(R.id.qr_instructions)).setText(getString(
+                    R.string.new_outbound_instructions, paired));
         }
         inputCode = (EditText) findViewById(R.id.inputCode);
 
