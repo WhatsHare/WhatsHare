@@ -9,22 +9,34 @@
         android:layout_margin="12dp" >
 
         <TextView
-            android:id="@+id/instructions"
+            android:id="@+id/pairingCodeMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_marginBottom="12dp"
+            android:text="@string/code_dialog"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/pairingCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pairingCodeMessage"
             android:layout_centerHorizontal="true"
+            android:layout_margin="12dp"
+            android:gravity="center_horizontal"
+            android:text="MmMmM"
             android:textSize="18sp" />
 
-        <ImageView
-            android:id="@+id/imageView1"
+        <TextView
+            android:id="@+id/pairingCodeReminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/instructions"
+            android:layout_below="@+id/pairingCode"
             android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
             android:layout_marginTop="12dp"
-            android:src="@drawable/qr_example" />
+            android:text="@string/code_dialog_reminder"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </RelativeLayout>
 
 </ScrollView>

@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -186,9 +187,15 @@ public class Dialogs {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 if (googl != null) {
-                    builder.setMessage(String.format(
-                            getResources().getString(R.string.code_dialog),
-                            googl));
+                    View layout = activity.getLayoutInflater().inflate(
+                            R.layout.pairing_code_dialog, null);
+                    TextView message = (TextView) layout
+                            .findViewById(R.id.pairingCode);
+                    Typeface typeFace = Typeface.createFromAsset(
+                            activity.getAssets(), "fonts/PTM55FT.ttf");
+                    message.setTypeface(typeFace);
+                    message.setText(googl);
+                    builder.setView(layout);
                 } else {
                     builder.setMessage(getResources().getString(
                             R.string.code_dialog_fail));
@@ -362,8 +369,9 @@ public class Dialogs {
                         R.layout.pair_inbound_instructions, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setView(layout);
-                builder.setMessage(getResources().getString(
-                        R.string.new_inbound_instructions));
+                ((TextView) layout.findViewById(R.id.instructions))
+                        .setText(getResources().getString(
+                                R.string.new_inbound_instructions));
                 builder.setPositiveButton(android.R.string.ok,
                         new OnClickListener() {
 
