@@ -64,6 +64,18 @@ public class MainActivity extends FragmentActivity {
      * {@link #DEBUG_FAILED_REQUESTS} is set.
      */
     public static final String DEBUG_FAILED_REQUESTS_SERVER = "http://192.168.0.8";
+    /**
+     * The key used to set the intent type according to which content is either
+     * shared directly through the paired device's WhatsApp or after showing an
+     * app picker dialog.
+     */
+    public static final String INTENT_TYPE_EXTRA = "type";
+    /**
+     * String added to the message sent through GCM in case the content should
+     * be shared directly via Whatsapp bypassing the app choice dialog on the
+     * receiver's side.
+     */
+    public static final String SHARE_VIA_WHATSAPP_EXTRA = "w";
 
     /**
      * A device paired with this one to share stuff on whatsapp.

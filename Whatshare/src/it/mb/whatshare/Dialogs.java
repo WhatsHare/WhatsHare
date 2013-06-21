@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
@@ -503,6 +504,42 @@ public class Dialogs {
                 return builder.create();
             }
         }.show(activity.getSupportFragmentManager(), "no_internet");
+    }
+
+    /**
+     * Shows a dialog informing the user that Whatsapp is not installed on the
+     * device, and gives an option to hide the dialog in the future.
+     * 
+     * @param activity
+     *            the caller activity
+     * @param intent
+     *            the intent containing the content to be shared
+     */
+    public static void whatsappMissing(final SendToWhatsappActivity activity,
+            final Intent intent) {
+        // @formatter:off
+        new AlertDialog.Builder(new ContextThemeWrapper(
+                activity, R.style.DialogTheme))
+            .setTitle(activity.getString(R.string.whatsapp_not_installed_title))
+            .setMessage(activity.getString(R.string.whatsapp_not_installed))
+            .setPositiveButton(activity.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    activity.startActivity(SendToAppActivity.createPlainIntent(intent.getStringExtra("message")));
+                }
+            })
+            .setNegativeButton(activity.getString(R.string.whatsapp_not_installed_dont_mind), new DialogInterface.OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences pref = activity.getSharedPreferences("it.mb.whatshare", Context.MODE_PRIVATE);
+                    pref.edit().putBoolean(SendToWhatsappActivity.HIDE_MISSING_WHATSAPP_KEY, true).commit();
+                    activity.startActivity(SendToAppActivity.createPlainIntent(intent.getStringExtra("message")));
+                }
+            })
+            .show();
+        // @formatter:on
     }
 
     /**

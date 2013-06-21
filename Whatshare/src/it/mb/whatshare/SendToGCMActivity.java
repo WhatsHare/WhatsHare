@@ -56,19 +56,20 @@ public class SendToGCMActivity extends FragmentActivity {
         @Override
         protected Void doInBackground(String... params) {
             String text = params[0];
+            String type = params[1];
             String assignedID = PairOutboundActivity
                     .getAssignedID(SendToGCMActivity.this);
             HttpPost post = new HttpPost(GCM_URL);
             try {
                 Utils.debug(String
-                        .format("{\"registration_ids\": [\"%s\"], \"data\": {\"message\": \"%s\", \"sender\": \"%s\"}}",
+                        .format("{\"registration_ids\": [\"%s\"], \"data\": {\"message\": \"%s\", \"sender\": \"%s\", \"type\": \"%s\"}}",
                                 outboundDevice.name, JSONObject.quote(text),
-                                JSONObject.quote(assignedID)));
+                                JSONObject.quote(assignedID), type));
                 post.setEntity(new StringEntity(
                         String.format(
-                                "{\"registration_ids\": [\"%s\"], \"data\": {\"message\": %s, \"sender\": %s}}",
+                                "{\"registration_ids\": [\"%s\"], \"data\": {\"message\": %s, \"sender\": %s, \"type\": \"%s\"}}",
                                 outboundDevice.name, JSONObject.quote(text),
-                                JSONObject.quote(assignedID))));
+                                JSONObject.quote(assignedID), type)));
                 post.setHeader("Content-Type", "application/json");
                 post.setHeader(
                         "Authorization",
@@ -258,13 +259,16 @@ public class SendToGCMActivity extends FragmentActivity {
     private void shareViaGCM(Intent intent) {
         String subject = intent.getExtras().getString(Intent.EXTRA_SUBJECT);
         String text = intent.getExtras().getString(Intent.EXTRA_TEXT);
+        String type = intent.getExtras().getString(
+                MainActivity.INTENT_TYPE_EXTRA,
+                MainActivity.SHARE_VIA_WHATSAPP_EXTRA);
         if (mustIncludeSubject(subject, text)) {
             text = subject + " - " + text;
         }
         int sharedWhat = text.contains("http://") ? R.string.link
                 : R.string.selection;
         Utils.debug("sharing with %s this: '%s'", outboundDevice.type, text);
-        new CallGCM().execute(text);
+        new CallGCM().execute(text, type);
         tracker.sendEvent("gcm", "share", sharedWhat == R.string.link ? "link"
                 : "text", 0L);
         showNotification(sharedWhat);

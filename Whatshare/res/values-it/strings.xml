@@ -152,21 +152,21 @@
     <string name="qr_input_submit">Invia</string>
     <string name="qr_desc">Un QR code per accoppiare dispositivi</string>
     <string name="invalidshorturl">Il codice deve contenere 5 caratteri alfanumerici</string>
-    <string name="successful_pairing">%1$s è stato associato correttamente!\n\nOra puoi usare WhatsHare per condividere contenuto dal tuo %1$s attraverso Whatsapp!</string>
+    <string name="successful_pairing">%1$s è stato associato correttamente!\n\nOra puoi usare WhatsHare per condividere contenuto dal tuo %1$s!</string>
     <string name="failed_pairing">Impossibile associare i due dispositivi, prova a fotografare di nuovo il QR code!</string>
     <string name="paired_inbound">Ricevi da</string>
     <string name="paired_outbound">Invia a</string>
     <string name="no_device">Nessun dispositivo</string>
     <string name="new_inbound_instructions">Fotografa il QR code (come quelli qui sotto) mostrato da WhatsHare sull\'altro dispositivo (o dall\'estensione per Chrome)</string>
-    <string name="new_outbound_instructions_first_time">Scansiona questo QR code con WhatsHare dall\'altro dispositivo Android (dove è installato Whatsapp).\n Poi, inserisci il codice ottenuto.</string>
-    <string name="new_outbound_instructions">Scansiona questo QR code con WhatsHare dall\'altro dispositivo Android (dove è installato Whatsapp).\n Poi, inserisci il codice ottenuto.\n\nATTENZIONE! Quest\'operazione disassocierà %1$s da questo dispositivo</string>
-    <string name="no_paired_device">Devi associare un dispositivo che abbia Whatsapp installato prima di poter condividere link o testo con WhatsHare</string>
+    <string name="new_outbound_instructions_first_time">Scansiona questo QR code con WhatsHare dall\'altro dispositivo Android.\n Poi, inserisci il codice ottenuto.</string>
+    <string name="new_outbound_instructions">Scansiona questo QR code con WhatsHare dall\'altro dispositivo Android.\n Poi, inserisci il codice ottenuto.\n\nATTENZIONE! Quest\'operazione disassocierà %1$s da questo dispositivo</string>
+    <string name="no_paired_device">Devi associare un dispositivo che abbia WhatsHare installato prima di poter condividere link o testo con WhatsHare</string>
     <string name="share_success">%1$s con %2$s!</string>
     <string name="selection">Condivisa selezione</string>
     <string name="link">Condiviso link</string>
     <string name="unpair">Disassocia</string>
     <string name="remove_inbound_paired_message">Disassociare %1$s?\n\nWhatshare ignorerà tutti i messaggi provenienti da %1$s</string>
-    <string name="remove_outbound_paired_message">Disassociare %1$s?\n\nNon si potranno più condividere messaggi utilizzando Whatsapp installato su %1$s finché non verrà associato di nuovo</string>
+    <string name="remove_outbound_paired_message">Disassociare %1$s?\n\nNon si potranno più condividere messaggi utilizzando WhatsHare installato su %1$s finché non verrà associato di nuovo</string>
     <string name="delete_file_saved_inbound">Rimuovi tutti i dispositivi in ingresso associati</string>
     <string name="device_id_chooser_title">Scegli un ID per il dispositivo</string>
     <string name="at_least_one_char">almeno 1 carattere</string>
@@ -195,5 +195,6 @@
     <string name="build_date_about">Creato il %s</string>
     <string name="app_name">Barcode Scanner</string>
     <string name="action_settings">Impostazioni</string>
-
+    <string name="title_activity_send_to_app">WhatsHare</string>
+    <string name="title_activity_send_to_whatsapp">WhatsHare-&lt;WhatsApp</string>
 </resources>

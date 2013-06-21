@@ -1,11 +1,8 @@
 package it.mb.whatshare;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
 import com.google.analytics.tracking.android.EasyTracker;
 
@@ -15,13 +12,7 @@ import com.google.analytics.tracking.android.EasyTracker;
  * 
  * @author Michele Bonazza
  */
-public class SendToWhatsappActivity extends FragmentActivity {
-
-    /**
-     * The preference key used to store the user preference over whether showing
-     * the missing Whatsapp dialog every time content is shared.
-     */
-    public static final String HIDE_MISSING_WHATSAPP_KEY = "hideMissingWhatsappDialog";
+public class SendToAppActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,22 +28,13 @@ public class SendToWhatsappActivity extends FragmentActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Utils.debug("SendToWhatsappActivity.onNewIntent()");
+        Utils.debug("SendToAppActivity.onNewIntent()");
         if (intent != null) {
             if (intent.getExtras() != null) {
                 String message = intent.getStringExtra("message");
                 if (message != null) {
-                    if (MainActivity.isWhatsappInstalled(this)) {
-                        startActivity(createIntent(message));
-                    } else {
-                        if (isMissingWhatsappDialogHidden()) {
-                            startActivity(SendToAppActivity
-                                    .createPlainIntent(intent
-                                            .getStringExtra("message")));
-                        } else {
-                            Dialogs.whatsappMissing(this, intent);
-                        }
-                    }
+                    startActivity(createPlainIntent(intent
+                            .getStringExtra("message")));
                 } else {
                     Utils.debug("QUE?");
                 }
@@ -82,20 +64,20 @@ public class SendToWhatsappActivity extends FragmentActivity {
         EasyTracker.getInstance().activityStop(this);
     }
 
-    private Intent createIntent(String message) {
+    /**
+     * Creates a share Intent that contains the argument <tt>message</tt> as
+     * {@link Intent#EXTRA_TEXT}.
+     * 
+     * @param message
+     *            the message to be stored by the returned intent
+     * @return a share intent of type <tt>text/plain</tt> with the argument
+     *         <tt>message</tt> stored as <tt>EXTRA_TEXT</tt>
+     */
+    public static Intent createPlainIntent(String message) {
         Intent i = new Intent(android.content.Intent.ACTION_SEND);
-        i.setPackage(MainActivity.WHATSAPP_PACKAGE);
         i.setType("text/plain");
         i.putExtra(Intent.EXTRA_TEXT, message);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Log.d("main", "this is the message: " + message);
         return i;
-    }
-
-    private boolean isMissingWhatsappDialogHidden() {
-        SharedPreferences pref = getSharedPreferences("it.mb.whatshare",
-                Context.MODE_PRIVATE);
-        return pref.getBoolean(HIDE_MISSING_WHATSAPP_KEY, false);
     }
 
 }

@@ -221,7 +221,10 @@ public class GCMIntentService extends GCMBaseIntentService {
                 bundle.getString("message"));
         readWhitelist();
         if (senderWhitelist.contains(sender)) {
-            generateNotification(arg0, bundle.getString("message"));
+            generateNotification(arg0, bundle.getString("message"),
+                    MainActivity.SHARE_VIA_WHATSAPP_EXTRA.equals(bundle
+                            .getString(MainActivity.INTENT_TYPE_EXTRA,
+                                    MainActivity.SHARE_VIA_WHATSAPP_EXTRA)));
         }
     }
 
@@ -233,15 +236,19 @@ public class GCMIntentService extends GCMBaseIntentService {
      *            the current application context
      * @param message
      *            the message to be shared
+     * @param useWhatsapp
+     *            whether the content should be shared bypassing the app choice
+     *            dialog calling whatsapp directly instead
      */
     @SuppressWarnings("deprecation")
-    public void generateNotification(Context context, String message) {
+    public void generateNotification(Context context, String message,
+            boolean useWhatsapp) {
         // @formatter:off
         String title = context.getString(R.string.whatshare);
+        Class<?> dst = useWhatsapp ? SendToWhatsappActivity.class : SendToAppActivity.class;
         // setAction is called so filterEquals() always returns false for all
         // our intents
-        Intent whatshareIntent = new Intent(context,
-                SendToWhatsappActivity.class)
+        Intent whatshareIntent = new Intent(context, dst)
                 .putExtra("message", message)
                 .setAction(String.valueOf(System.currentTimeMillis()))
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
