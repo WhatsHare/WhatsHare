@@ -21,6 +21,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -150,29 +153,31 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
                 mainActivity.getResources().getString(
                         R.string.android_shortener_key)));
         String shortURL = null;
-        int tries = 0;
+        int tries = 1;
         try {
             post.setEntity(new StringEntity(String.format(
                     "{\"longUrl\": \"%s\"}",
                     getURL(encodedID, encodedAssignedID))));
             post.setHeader("Content-Type", "application/json");
-            DefaultHttpClient client = new DefaultHttpClient();
-            client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(
-                    0, false));
+            long timeout = RETRY_SLEEP_TIME * tries;
+            HttpParams params = new BasicHttpParams();
+            DefaultHttpClient client = updateTimeout(params, timeout);
             String response = null;
             while (response == null && tries < RETRY_COUNT) {
                 try {
                     response = client.execute(post, new BasicResponseHandler());
                 } catch (IOException e) {
                     // maybe just try again...
-                    tries++;
                     Utils.debug("attempt %d failed... waiting", tries);
                     try {
                         // life is too short for exponential backoff
-                        Thread.sleep(RETRY_SLEEP_TIME * tries);
+                        Thread.sleep(timeout);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
+                    tries++;
+                    timeout = RETRY_SLEEP_TIME * tries;
+                    client = updateTimeout(params, timeout);
                 }
             }
             Utils.debug("response is %s", response);
@@ -189,6 +194,15 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
             e.printStackTrace();
         }
         return shortURL;
+    }
+
+    private DefaultHttpClient updateTimeout(HttpParams params, long timeout) {
+        HttpConnectionParams.setConnectionTimeout(params, (int) timeout);
+        HttpConnectionParams.setSoTimeout(params, (int) timeout * 3);
+        DefaultHttpClient client = new DefaultHttpClient(params);
+        client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(0,
+                false));
+        return client;
     }
 
     private void debugPost(HttpPost post, HttpClient client) {
