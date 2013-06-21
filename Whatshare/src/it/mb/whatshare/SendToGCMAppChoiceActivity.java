@@ -33,5 +33,6 @@ public class SendToGCMAppChoiceActivity extends Activity {
         newIntent.putExtras(intent);
         newIntent.putExtra(MainActivity.INTENT_TYPE_EXTRA, "c");
         startActivity(newIntent);
+        finish();
     }
 }

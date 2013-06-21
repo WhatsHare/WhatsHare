@@ -111,7 +111,7 @@ public class GCMIntentService extends GCMBaseIntentService {
             try {
                 REGISTRATION_LOCK.lock();
                 // check again within lock
-                if ("".equals(registrationID) && errorID != -1) {
+                if ("".equals(registrationID) && errorID == -1) {
                     REGISTERED.await();
                 }
             } catch (InterruptedException e) {
@@ -258,7 +258,7 @@ public class GCMIntentService extends GCMBaseIntentService {
         
         Notification notification = null;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.notification_icon, 0)
+                .setSmallIcon(useWhatsapp ? R.drawable.notification_icon : R.drawable.whatshare_logo_notification, 0)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setContentIntent(intent)

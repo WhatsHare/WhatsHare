@@ -67,7 +67,7 @@ public class SendToGCMActivity extends FragmentActivity {
                                 JSONObject.quote(assignedID), type));
                 post.setEntity(new StringEntity(
                         String.format(
-                                "{\"registration_ids\": [\"%s\"], \"data\": {\"message\": %s, \"sender\": %s, \"type\": \"%s\"}}",
+                                "{\"delay_while_idle\": false, \"registration_ids\": [\"%s\"], \"data\": {\"message\": %s, \"sender\": %s, \"type\": \"%s\"}}",
                                 outboundDevice.name, JSONObject.quote(text),
                                 JSONObject.quote(assignedID), type)));
                 post.setHeader("Content-Type", "application/json");

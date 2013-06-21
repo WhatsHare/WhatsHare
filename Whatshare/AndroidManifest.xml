@@ -30,7 +30,7 @@
     <application
         android:allowBackup="true"
         android:allowTaskReparenting="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/whatshare_logo"
         android:label="@string/whatshare"
         android:theme="@style/AppTheme" >
         <service android:name="it.mb.whatshare.GCMIntentService" />
@@ -41,6 +41,7 @@
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="it.mb.whatshare" />
             </intent-filter>
         </receiver>
@@ -53,6 +54,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="com.google.zxing.client.android.SCAN" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -64,6 +66,7 @@
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -82,33 +85,39 @@
         </activity>
         <activity
             android:name="it.mb.whatshare.SendToGCMActivity"
-            android:label="@string/title_activity_send_to_whatsapp"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
+            android:icon="@drawable/whatsapp_launcher"
+            android:label="@string/title_activity_send_to_whatsapp"
             android:launchMode="singleInstance"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
         <activity
             android:name="it.mb.whatshare.SendToGCMAppChoiceActivity"
-            android:label="@string/title_activity_send_to_app"
             android:clearTaskOnLaunch="true"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="true"
+            android:label="@string/title_activity_send_to_app"
             android:launchMode="singleInstance"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
-            </intent-filter> >
+            </intent-filter>
+ >
         </activity>
         <activity
             android:name="it.mb.whatshare.SendToWhatsappActivity"
