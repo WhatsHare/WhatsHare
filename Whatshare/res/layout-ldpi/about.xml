@@ -1,5 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,8 +29,8 @@
 
         <ImageView
             android:id="@+id/imageView1"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_below="@id/build_date"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="12dp"
