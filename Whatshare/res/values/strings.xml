@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> 
+ *
+ * This file is part of WhatsHare.
+ * 
+ * WhatsHare is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Foobar is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * WhatsHare. If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <resources>
 
     <!-- ZXING strings -->
@@ -181,7 +199,8 @@
     <string name="title_activity_about">About</string>
     <string name="title_about_dialog">WhatsHare %s</string>
     <string name="build_date_about">Built on %s</string>
-    <string name="description_about_dialog">You can download  <a href="https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib">the companion Chrome Extension</a> from your desktop/laptop.\n\n<a href="https://github.com/micheleb/WhatsHare">Home page on GitHub</a>.\n\n\u00A9 2013 <a href="mailto:michele.bonazza@gmail.com">Michele Bonazza</a>\n\nSmartphone icon modified from G. Hagedorn\'s [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a></string>
+    <string name="description_about_dialog">You can download  <a href="https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib">the companion Chrome Extension</a> from your desktop/laptop.\n\n<a href="https://github.com/micheleb/WhatsHare">Home page on GitHub</a>.\n\n\u00A9 2013 <a href="mailto:emmepuntobi@gmail.com">Michele Bonazza</a>\n\nAll code is licensed under the <a href="http://www.gnu.org/licenses/gpl-3.0.txt">GNU GPL version 3</a>.\n\nThe smartphone icon is derivative work from G. Hagedorn\'s one, released under [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a>\n\nAll other graphics are licensed under [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>].</string>
     <string name="title_activity_send_to_app">WhatsHare</string>
     <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
+
 </resources>

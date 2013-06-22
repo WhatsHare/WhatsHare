@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
- Copyright (C) 2012 ZXing authors
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+ * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> 
+ *
+ * This file is part of WhatsHare.
+ * 
+ * WhatsHare is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * Foobar is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * WhatsHare. If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
 
@@ -191,10 +194,11 @@
     <string name="no_internet_sending">Condividere contenuti con altri dispositivi tramite WhatsHare</string>
     <string name="title_activity_about">Informazioni</string>
     <string name="title_about_dialog">WhatsHare %s</string>
-    <string name="description_about_dialog">Puoi scaricare <a href="https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib">l\'estensione per Chrome associata</a> dal tuo PC/laptop.\n\n<a href="https://github.com/micheleb/WhatsHare">Home page su GitHub</a>.\n\n\u00A9 2013 <a href="mailto:michele.bonazza@gmail.com">Michele Bonazza</a>\n\nIcona dello smartphone creata a partire da quella di G. Hagedorn [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a></string>
+    <string name="description_about_dialog">Puoi scaricare <a href="https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib">l\'estensione per Chrome associata</a> dal tuo PC/laptop.\n\n<a href="https://github.com/micheleb/WhatsHare">Home page su GitHub</a>.\n\n\u00A9 2013 <a href="mailto:emmepuntobi@gmail.com">Michele Bonazza</a>\n\nTutto il codice è rilasciato sotto licenza <a href="http://www.gnu.org/licenses/gpl-3.0.txt">GNU GPL version 3</a>.\n\nL\'icona dello smartphone è stata creata a partire da quella di G. Hagedorn, rilasciata sotto licenza [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a>\n\nTutti gli altri elementi grafici sono rilasciati sotto licenza [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>].</string>
     <string name="build_date_about">Creato il %s</string>
     <string name="app_name">Barcode Scanner</string>
     <string name="action_settings">Impostazioni</string>
     <string name="title_activity_send_to_app">WhatsHare</string>
     <string name="title_activity_send_to_whatsapp">WhatsHare-&lt;WhatsApp</string>
+
 </resources>
