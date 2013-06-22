@@ -221,10 +221,12 @@ public class GCMIntentService extends GCMBaseIntentService {
                 bundle.getString("message"));
         readWhitelist();
         if (senderWhitelist.contains(sender)) {
+            String type = bundle.getString(MainActivity.INTENT_TYPE_EXTRA);
+            if (type == null) {
+                type = MainActivity.SHARE_VIA_WHATSAPP_EXTRA;
+            }
             generateNotification(arg0, bundle.getString("message"),
-                    MainActivity.SHARE_VIA_WHATSAPP_EXTRA.equals(bundle
-                            .getString(MainActivity.INTENT_TYPE_EXTRA,
-                                    MainActivity.SHARE_VIA_WHATSAPP_EXTRA)));
+                    MainActivity.SHARE_VIA_WHATSAPP_EXTRA.equals(type));
         }
     }
 

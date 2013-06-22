@@ -35,7 +35,6 @@ import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.util.Pair;
-import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -76,8 +75,7 @@ public class Dialogs {
     public static void onQRFail(final FragmentActivity activity) {
         DialogFragment failDialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                return new AlertDialog.Builder(new ContextThemeWrapper(
-                        activity, R.style.DialogTheme))
+                return getBuilder(activity)
                         .setMessage(R.string.qr_code_fail)
                         .setPositiveButton(R.string.qr_code_retry,
                                 new OnClickListener() {
@@ -114,8 +112,7 @@ public class Dialogs {
             final FragmentActivity activity) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        new ContextThemeWrapper(activity, R.style.DialogTheme));
+                AlertDialog.Builder builder = getBuilder(activity);
                 try {
                     builder.setMessage(getString(R.string.failed_pairing));
                     if (device != null) {
@@ -154,13 +151,21 @@ public class Dialogs {
      *            the error message's resource ID within <tt>strings.xml</tt>
      * @param activity
      *            the caller activity
+     * @param finishActivityOnOk
+     *            whether the call comes from an activity with no UI that
+     *            requires clicks on ok (or back) to call
+     *            {@link Activity#finish()} on the caller activity
      */
     public static void onRegistrationError(final int errorCode,
-            final FragmentActivity activity) {
+            final FragmentActivity activity, final boolean finishActivityOnOk) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        new ContextThemeWrapper(activity, R.style.DialogTheme));
+                AlertDialog.Builder builder;
+                if (finishActivityOnOk) {
+                    builder = getNoUiBuilder(activity);
+                } else {
+                    builder = getBuilder(activity);
+                }
                 builder.setMessage(getString(R.string.gcm_registration_error,
                         getString(errorCode)));
                 builder.setPositiveButton(android.R.string.ok,
@@ -172,7 +177,9 @@ public class Dialogs {
                                 // just hide dialog
                             }
                         });
-                return builder.create();
+                Dialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(!finishActivityOnOk);
+                return dialog;
             }
         }.show(activity.getSupportFragmentManager(), "gcm_error");
     }
@@ -190,12 +197,9 @@ public class Dialogs {
             final MainActivity activity) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                ContextThemeWrapper themeWrapper = new ContextThemeWrapper(
-                        activity, R.style.DialogTheme);
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        themeWrapper);
+                AlertDialog.Builder builder = getBuilder(activity);
                 if (googl != null) {
-                    View layout = View.inflate(themeWrapper,
+                    View layout = View.inflate(builder.getContext(),
                             R.layout.pairing_code_dialog, null);
                     TextView message = (TextView) layout
                             .findViewById(R.id.pairingCode);
@@ -257,15 +261,14 @@ public class Dialogs {
             public void run() {
                 DialogFragment prompt = new PatchedDialogFragment() {
                     public Dialog onCreateDialog(Bundle savedInstanceState) {
-                        ContextThemeWrapper themeWrapper = new ContextThemeWrapper(
-                                activity, R.style.DialogTheme);
-                        final EditText input = new EditText(themeWrapper);
+                        AlertDialog.Builder builder = getBuilder(activity);
+                        final EditText input = new EditText(builder
+                                .getContext());
                         input.setInputType(InputType.TYPE_CLASS_TEXT);
                         input.setText(deviceType);
                         input.setSelection(deviceType.length());
-                        // @formatter:off
-                        AlertDialog.Builder builder = new AlertDialog.Builder(themeWrapper)
-                            .setTitle(R.string.device_id_chooser_title)
+                        // @formatter:off 
+                        builder.setTitle(R.string.device_id_chooser_title)
                             .setView(input)
                             .setPositiveButton(android.R.string.ok, null);
                         // @formatter:on
@@ -343,8 +346,7 @@ public class Dialogs {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
-                    AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(
-                        activity, R.style.DialogTheme))
+                    AlertDialog.Builder builder = getBuilder(activity)
                         .setMessage(
                             getResources().getString(
                                     R.string.remove_outbound_paired_message,
@@ -375,12 +377,9 @@ public class Dialogs {
     public static void pairInboundInstructions(final FragmentActivity activity) {
         DialogFragment dialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                ContextThemeWrapper themeWrapper = new ContextThemeWrapper(
-                        activity, R.style.DialogTheme);
-                View layout = View.inflate(themeWrapper,
+                AlertDialog.Builder builder = getBuilder(activity);
+                View layout = View.inflate(builder.getContext(),
                         R.layout.pair_inbound_instructions, null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        themeWrapper);
                 builder.setView(layout);
                 ((TextView) layout.findViewById(R.id.instructions))
                         .setText(getResources().getString(
@@ -423,8 +422,7 @@ public class Dialogs {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
-                AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(
-                        activity, R.style.DialogTheme))
+                AlertDialog.Builder builder = getBuilder(activity)
                     .setMessage(
                         getResources().getString(
                                 R.string.remove_inbound_paired_message,
@@ -455,8 +453,7 @@ public class Dialogs {
     public static void noPairedDevice(final FragmentActivity activity) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        new ContextThemeWrapper(activity, R.style.DialogTheme));
+                AlertDialog.Builder builder = getNoUiBuilder(activity);
                 builder.setMessage(getString(R.string.no_paired_device));
                 builder.setPositiveButton(android.R.string.ok,
                         new OnClickListener() {
@@ -469,7 +466,9 @@ public class Dialogs {
                                 startActivity(i);
                             }
                         });
-                return builder.create();
+                Dialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                return dialog;
             }
         }.show(activity.getSupportFragmentManager(), "no paired device");
     }
@@ -483,25 +482,25 @@ public class Dialogs {
      * @param whyItsNeeded
      *            the resource ID within <tt>strings.xml</tt> that explains to
      *            the user why an Internet connection is needed by the operation
+     * @param finishActivityOnOk
+     *            whether the caller activity must be {@link Activity#finish()}
+     *            'ed after the user hides the dialog
      */
     public static void noInternetConnection(final FragmentActivity activity,
-            final int whyItsNeeded) {
+            final int whyItsNeeded, final boolean finishActivityOnOk) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        new ContextThemeWrapper(activity, R.style.DialogTheme));
+                AlertDialog.Builder builder;
+                if (finishActivityOnOk) {
+                    builder = getNoUiBuilder(activity);
+                } else {
+                    builder = getBuilder(activity);
+                }
                 builder.setMessage(getString(R.string.no_internet_connection,
                         getString(whyItsNeeded)));
-                builder.setPositiveButton(android.R.string.ok,
-                        new OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                // just hide dialog
-                            }
-                        });
-                return builder.create();
+                Dialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(!finishActivityOnOk);
+                return dialog;
             }
         }.show(activity.getSupportFragmentManager(), "no_internet");
     }
@@ -518,27 +517,33 @@ public class Dialogs {
     public static void whatsappMissing(final SendToWhatsappActivity activity,
             final Intent intent) {
         // @formatter:off
-        new AlertDialog.Builder(new ContextThemeWrapper(
-                activity, R.style.DialogTheme))
-            .setTitle(activity.getString(R.string.whatsapp_not_installed_title))
-            .setMessage(activity.getString(R.string.whatsapp_not_installed))
-            .setPositiveButton(activity.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    activity.startActivity(SendToAppActivity.createPlainIntent(intent.getStringExtra("message")));
-                }
-            })
-            .setNegativeButton(activity.getString(R.string.whatsapp_not_installed_dont_mind), new DialogInterface.OnClickListener() {
-                
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    SharedPreferences pref = activity.getSharedPreferences("it.mb.whatshare", Context.MODE_PRIVATE);
-                    pref.edit().putBoolean(SendToWhatsappActivity.HIDE_MISSING_WHATSAPP_KEY, true).commit();
-                    activity.startActivity(SendToAppActivity.createPlainIntent(intent.getStringExtra("message")));
-                }
-            })
-            .show();
+        DialogFragment dialog = new PatchedDialogFragment() {
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                AlertDialog.Builder builder = getNoUiBuilder(activity)
+                .setTitle(activity.getString(R.string.whatsapp_not_installed_title))
+                .setMessage(activity.getString(R.string.whatsapp_not_installed))
+                .setPositiveButton(activity.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.startActivity(SendToAppActivity.createPlainIntent(intent.getStringExtra("message")));
+                    }
+                })
+                .setNegativeButton(activity.getString(R.string.whatsapp_not_installed_dont_mind), new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences pref = activity.getSharedPreferences("it.mb.whatshare", Context.MODE_PRIVATE);
+                        pref.edit().putBoolean(SendToWhatsappActivity.HIDE_MISSING_WHATSAPP_KEY, true).commit();
+                        activity.startActivity(SendToAppActivity.createPlainIntent(intent.getStringExtra("message")));
+                    }
+                });
+                Dialog dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                return dialog;
+            }
+        };
+        dialog.show(activity.getSupportFragmentManager(), "whatsapp_missing");
         // @formatter:on
     }
 
@@ -551,9 +556,9 @@ public class Dialogs {
     public static void showAbout(final FragmentActivity activity) {
         DialogFragment dialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
-                ContextThemeWrapper themeWrapper = new ContextThemeWrapper(
-                        activity, R.style.DialogTheme);
-                View layout = View.inflate(themeWrapper, R.layout.about, null);
+                AlertDialog.Builder builder = getBuilder(activity);
+                View layout = View.inflate(builder.getContext(),
+                        R.layout.about, null);
                 String version = "alpha";
                 try {
                     version = activity.getPackageManager().getPackageInfo(
@@ -571,18 +576,7 @@ public class Dialogs {
                 // make links clickable
                 ((TextView) layout.findViewById(R.id.description))
                         .setMovementMethod(LinkMovementMethod.getInstance());
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        themeWrapper);
                 builder.setView(layout);
-                builder.setPositiveButton(android.R.string.ok,
-                        new OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                // just hide dialog
-                            }
-                        });
                 return builder.create();
             }
         };

@@ -35,4 +35,28 @@ public class SendToGCMAppChoiceActivity extends Activity {
         startActivity(newIntent);
         finish();
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onBackPressed()
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Utils.debug("sendGCM onback!");
+        finish();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        Utils.debug("sendGCM onResume!");
+    }
 }

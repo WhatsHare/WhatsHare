@@ -107,7 +107,8 @@ public class SendToGCMActivity extends FragmentActivity {
         tracker = GoogleAnalytics.getInstance(this).getDefaultTracker();
         if ("".equals(registrationID)) {
             if (!Utils.isConnectedToTheInternet(this)) {
-                Dialogs.noInternetConnection(this, R.string.no_internet_sending);
+                Dialogs.noInternetConnection(this,
+                        R.string.no_internet_sending, true);
             } else {
                 GCMIntentService.registerWithGCM(this);
                 new AsyncTask<Void, Void, Void>() {
@@ -150,7 +151,7 @@ public class SendToGCMActivity extends FragmentActivity {
                         dialog.dismiss();
                         if (registrationError != -1) {
                             Dialogs.onRegistrationError(registrationError,
-                                    SendToGCMActivity.this);
+                                    SendToGCMActivity.this, true);
                         } else {
                             onNewIntent(getIntent());
                         }
@@ -192,7 +193,8 @@ public class SendToGCMActivity extends FragmentActivity {
         tracker = GoogleAnalytics.getInstance(this).getDefaultTracker();
         if (intent.hasExtra(Intent.EXTRA_TEXT)) {
             if (!Utils.isConnectedToTheInternet(this)) {
-                Dialogs.noInternetConnection(this, R.string.no_internet_sending);
+                Dialogs.noInternetConnection(this,
+                        R.string.no_internet_sending, true);
             } else {
                 // send to paired device if any
                 try {
@@ -260,8 +262,9 @@ public class SendToGCMActivity extends FragmentActivity {
         String subject = intent.getExtras().getString(Intent.EXTRA_SUBJECT);
         String text = intent.getExtras().getString(Intent.EXTRA_TEXT);
         String type = intent.getExtras().getString(
-                MainActivity.INTENT_TYPE_EXTRA,
-                MainActivity.SHARE_VIA_WHATSAPP_EXTRA);
+                MainActivity.INTENT_TYPE_EXTRA);
+        if (type == null)
+            type = MainActivity.SHARE_VIA_WHATSAPP_EXTRA;
         if (mustIncludeSubject(subject, text)) {
             text = subject + " - " + text;
         }
@@ -271,23 +274,26 @@ public class SendToGCMActivity extends FragmentActivity {
         new CallGCM().execute(text, type);
         tracker.sendEvent("gcm", "share", sharedWhat == R.string.link ? "link"
                 : "text", 0L);
-        showNotification(sharedWhat);
+        showNotification(sharedWhat,
+                MainActivity.SHARE_VIA_WHATSAPP_EXTRA.equals(type));
     }
 
     @SuppressWarnings("deprecation")
-    private void showNotification(int sharedWhat) {
+    private void showNotification(int sharedWhat, boolean sharedViaWhatsapp) {
         String title = getString(R.string.whatshare);
         Intent onNotificationDiscarded = new Intent(this,
                 SendToGCMActivity.class);
         PendingIntent notificationIntent = PendingIntent.getActivity(this, 0,
                 onNotificationDiscarded, 0);
         Notification notification = null;
+        int notificationIcon = sharedViaWhatsapp ? R.drawable.notification_icon
+                : R.drawable.whatshare_logo_notification;
         int notificationNumber = notificationCounter.incrementAndGet();
         String content = getString(R.string.share_success,
                 getString(sharedWhat), outboundDevice.type);
         // @formatter:off
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.notification_icon, 0)
+                .setSmallIcon(notificationIcon, 0)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setTicker(content)

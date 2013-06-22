@@ -112,7 +112,7 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
         super.onPostExecute(result);
         dialog.dismiss();
         if (registrationError != -1) {
-            Dialogs.onRegistrationError(registrationError, mainActivity);
+            Dialogs.onRegistrationError(registrationError, mainActivity, false);
         } else {
             Dialogs.onObtainPairingCode(googl, mainActivity);
         }

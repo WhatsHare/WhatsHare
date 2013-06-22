@@ -378,7 +378,8 @@ public class MainActivity extends FragmentActivity {
             Dialogs.pairInboundInstructions(this);
         } else {
             tracker.sendEvent("ui", "button_press", "add_inbound", -1L);
-            Dialogs.noInternetConnection(this, R.string.no_internet_pairing);
+            Dialogs.noInternetConnection(this, R.string.no_internet_pairing,
+                    false);
         }
     }
 
@@ -391,7 +392,8 @@ public class MainActivity extends FragmentActivity {
             showOutboundConfiguration();
         } else {
             tracker.sendEvent("ui", "button_press", "add_outbound", -1L);
-            Dialogs.noInternetConnection(this, R.string.no_internet_pairing);
+            Dialogs.noInternetConnection(this, R.string.no_internet_pairing,
+                    false);
         }
     }
 
