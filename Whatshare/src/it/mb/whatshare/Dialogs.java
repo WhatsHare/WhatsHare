@@ -2,7 +2,8 @@
  * FragmentUtils.java Created on 13 Jun 2013 Copyright 2013 Michele Bonazza
  * <emmepuntobi@gmail.com>
  * 
- * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of WhatsHare.
+ * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of
+ * WhatsHare.
  * 
  * WhatsHare is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -213,7 +214,7 @@ public class Dialogs {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = getBuilder(activity);
                 if (googl != null) {
-                    View layout = View.inflate(builder.getContext(),
+                    View layout = View.inflate(getContext(),
                             R.layout.pairing_code_dialog, null);
                     TextView message = (TextView) layout
                             .findViewById(R.id.pairingCode);
@@ -392,7 +393,7 @@ public class Dialogs {
         DialogFragment dialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = getBuilder(activity);
-                View layout = View.inflate(builder.getContext(),
+                View layout = View.inflate(getContext(),
                         R.layout.pair_inbound_instructions, null);
                 builder.setView(layout);
                 ((TextView) layout.findViewById(R.id.instructions))
@@ -571,8 +572,7 @@ public class Dialogs {
         DialogFragment dialog = new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 AlertDialog.Builder builder = getBuilder(activity);
-                View layout = View.inflate(builder.getContext(),
-                        R.layout.about, null);
+                View layout = View.inflate(getContext(), R.layout.about, null);
                 String version = "alpha";
                 try {
                     version = activity.getPackageManager().getPackageInfo(

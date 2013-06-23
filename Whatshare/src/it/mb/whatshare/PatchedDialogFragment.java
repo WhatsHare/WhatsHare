@@ -2,7 +2,8 @@
  * PatchedDialogFragment.java Created on 18 Jun 2013 Copyright 2013 Michele
  * Bonazza <emmepuntobi@gmail.com>
  * 
- * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of WhatsHare.
+ * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of
+ * WhatsHare.
  * 
  * WhatsHare is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -21,6 +22,7 @@ package it.mb.whatshare;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.support.v4.app.DialogFragment;
@@ -46,6 +48,8 @@ import android.view.KeyEvent;
  * 
  */
 public class PatchedDialogFragment extends DialogFragment {
+
+    private ContextThemeWrapper context;
 
     /*
      * (non-Javadoc)
@@ -78,9 +82,9 @@ public class PatchedDialogFragment extends DialogFragment {
      * @return a builder to be used to create a dialog with
      */
     protected Builder getNoUiBuilder(final FragmentActivity activity) {
+        context = new ContextThemeWrapper(activity, R.style.DialogTheme);
         // @formatter:off
-        return new AlertDialog.Builder(new ContextThemeWrapper(
-                activity, R.style.DialogTheme))
+        return new AlertDialog.Builder(context)
             .setCancelable(false)
             .setOnKeyListener(new DialogInterface.OnKeyListener() {
                         @Override
@@ -122,9 +126,9 @@ public class PatchedDialogFragment extends DialogFragment {
      * @return a builder to be used to create a dialog with
      */
     protected Builder getBuilder(final FragmentActivity activity) {
+        context = new ContextThemeWrapper(activity, R.style.DialogTheme);
         // @formatter:off
-       return new AlertDialog.Builder(new ContextThemeWrapper(
-                activity, R.style.DialogTheme))
+       return new AlertDialog.Builder(context)
            .setPositiveButton(android.R.string.ok,
                new OnClickListener() {
 
@@ -137,4 +141,14 @@ public class PatchedDialogFragment extends DialogFragment {
        // @formatter:on
     }
 
+    /**
+     * Returns the context to be used when inflating XML resources.
+     * 
+     * @return the context for this dialog
+     */
+    protected Context getContext() {
+        if (context != null)
+            return context;
+        return getActivity();
+    }
 }
