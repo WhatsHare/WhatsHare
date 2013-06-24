@@ -277,8 +277,7 @@ public class Dialogs {
                 DialogFragment prompt = new PatchedDialogFragment() {
                     public Dialog onCreateDialog(Bundle savedInstanceState) {
                         AlertDialog.Builder builder = getBuilder(activity);
-                        final EditText input = new EditText(builder
-                                .getContext());
+                        final EditText input = new EditText(getContext());
                         input.setInputType(InputType.TYPE_CLASS_TEXT);
                         input.setText(deviceType);
                         input.setSelection(deviceType.length());
