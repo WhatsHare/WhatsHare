@@ -168,7 +168,7 @@
     <string name="selection">Condivisa selezione</string>
     <string name="link">Condiviso link</string>
     <string name="unpair">Disassocia</string>
-    <string name="remove_inbound_paired_message">Disassociare %1$s?\n\nWhatshare ignorerà tutti i messaggi provenienti da %1$s</string>
+    <string name="remove_inbound_paired_message">Disassociare %1$s?\n\nWhatsHare ignorerà tutti i messaggi provenienti da %1$s</string>
     <string name="remove_outbound_paired_message">Disassociare %1$s?\n\nNon si potranno più condividere messaggi utilizzando WhatsHare installato su %1$s finché non verrà associato di nuovo</string>
     <string name="delete_file_saved_inbound">Rimuovi tutti i dispositivi in ingresso associati</string>
     <string name="device_id_chooser_title">Scegli un ID per il dispositivo</string>
@@ -199,6 +199,6 @@
     <string name="app_name">Barcode Scanner</string>
     <string name="action_settings">Impostazioni</string>
     <string name="title_activity_send_to_app">WhatsHare</string>
-    <string name="title_activity_send_to_whatsapp">WhatsHare-&lt;WhatsApp</string>
+    <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
 
 </resources>

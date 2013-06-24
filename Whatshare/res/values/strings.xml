@@ -172,7 +172,7 @@
     <string name="selection">selection</string>
     <string name="link">link</string>
     <string name="unpair">Unpair</string>
-    <string name="remove_inbound_paired_message">Remove %1$s from the list of paired devices?\n\nThis will make Whatshare ignore all messages coming from %1$s</string>
+    <string name="remove_inbound_paired_message">Remove %1$s from the list of paired devices?\n\nThis will make WhatsHare ignore all messages coming from %1$s</string>
     <string name="remove_outbound_paired_message">Unpair %1$s?\n\nYou won\'t be able to share content using %1$s\'s WhatsHare until you pair it again</string>
     <string name="delete_file_saved_inbound">Delete all inbound pairings</string>
     <string name="device_id_chooser_title">Choose an ID for the device</string>

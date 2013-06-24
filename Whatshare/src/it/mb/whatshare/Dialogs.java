@@ -41,14 +41,18 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
+import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ForegroundColorSpan;
 import android.util.Pair;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -306,19 +310,22 @@ public class Dialogs {
                                                                 MainActivity.VALID_DEVICE_ID,
                                                                 deviceId)) {
                                                     if (deviceId.length() < 1) {
-                                                        input.setError(getResources()
-                                                                .getString(
-                                                                        R.string.at_least_one_char));
+                                                        setError(
+                                                                input,
+                                                                R.string.at_least_one_char,
+                                                                activity);
                                                     } else {
-                                                        input.setError(getResources()
-                                                                .getString(
-                                                                        R.string.wrong_char));
+                                                        setError(
+                                                                input,
+                                                                R.string.wrong_char,
+                                                                activity);
                                                     }
                                                 } else if (!activity
                                                         .isValidChoice(deviceId)) {
-                                                    input.setError(getResources()
-                                                            .getString(
-                                                                    R.string.id_already_in_use));
+                                                    setError(
+                                                            input,
+                                                            R.string.id_already_in_use,
+                                                            activity);
                                                 } else {
                                                     new CallGooGlInbound(
                                                             activity, deviceId,
@@ -341,6 +348,32 @@ public class Dialogs {
                 prompt.show(activity.getSupportFragmentManager(), "chooseName");
             }
         });
+    }
+
+    /**
+     * Sad workaround.
+     * 
+     * See http://stackoverflow.com/a/7350315/1159164
+     * 
+     * @param input
+     *            the EditText to set the error to
+     * @param errorID
+     *            the ID of the error in <tt>strings.xml</tt>
+     * @param activity
+     *            the enclosing activity
+     */
+    private static void
+            setError(EditText input, int errorID, Activity activity) {
+        String errorMsg = activity.getResources().getString(errorID);
+        if (Build.VERSION.SDK_INT < 11) {
+            ForegroundColorSpan fgcspan = new ForegroundColorSpan(Color.BLACK);
+            SpannableStringBuilder ssbuilder = new SpannableStringBuilder(
+                    errorMsg);
+            ssbuilder.setSpan(fgcspan, 0, errorMsg.length(), 0);
+            input.setError(ssbuilder);
+        } else {
+            input.setError(errorMsg);
+        }
     }
 
     /**
