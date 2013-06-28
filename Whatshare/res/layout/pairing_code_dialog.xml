@@ -24,6 +24,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="top"
         android:layout_margin="12dp" >
 
         <TextView
@@ -31,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginBottom="12dp"
+            android:layout_margin="12dp"
             android:text="@string/code_dialog"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -52,9 +53,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/pairingCode"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
+            android:layout_margin="12dp"
             android:text="@string/code_dialog_reminder"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+
     </RelativeLayout>
 
 </ScrollView>

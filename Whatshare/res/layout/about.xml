@@ -60,9 +60,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/imageView1"
             android:layout_centerHorizontal="true"
+            android:layout_margin="12dp"
             android:gravity="center_horizontal"
             android:text="@string/description_about_dialog"
             android:textSize="18sp" />
+
     </RelativeLayout>
 
 </ScrollView>

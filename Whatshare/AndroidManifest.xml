@@ -20,8 +20,8 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.mb.whatshare"
-    android:versionCode="15"
-    android:versionName="1.2.9" >
+    android:versionCode="16"
+    android:versionName="1.2.10" >
 
     <uses-sdk
         android:minSdkVersion="9"
