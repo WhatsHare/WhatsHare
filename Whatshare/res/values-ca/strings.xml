@@ -68,7 +68,7 @@
   <string name="msg_default_format">Format</string>
   <string name="msg_default_meta">Metadadades</string>
   <string name="msg_default_mms_subject">Hola</string>
-  <string name="msg_default_status">Poseu un codi de barres dins el rectable per escanejar-lo.</string>
+  <string name="msg_default_status">Poseu un codi QR dins el rectable per escanejar-lo.</string>
   <string name="msg_default_time">Hora</string>
   <string name="msg_default_type">Tipus</string>
   <string name="msg_encode_contents_failed">No es pot codificar un codi de barres amb les dades proporcionades.</string>

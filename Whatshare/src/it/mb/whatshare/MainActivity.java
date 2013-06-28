@@ -3,7 +3,8 @@
  * 
  * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com>
  * 
- * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of WhatsHare.
+ * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of
+ * WhatsHare.
  * 
  * WhatsHare is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -49,6 +50,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
@@ -376,11 +378,23 @@ public class MainActivity extends FragmentActivity {
 
     private void onDeleteSavedInboundPressed() {
         tracker.sendEvent("ui", "button_press", "delete_all_inbound", 0L);
-        Utils.debug("deleting inbound devices... %s", getApplicationContext()
-                .deleteFile(INBOUND_DEVICES_FILENAME) ? "success" : "fail");
-        inboundDevices = new ArrayList<PairedDevice>();
-        BaseAdapter listAdapter = getListAdapter();
-        listAdapter.notifyDataSetChanged();
+        Dialogs.confirmUnpairAllInbound(this);
+    }
+
+    /**
+     * Removes all inbound paired devices.
+     */
+    public void deleteAllInbound() {
+        if (getApplicationContext().deleteFile(INBOUND_DEVICES_FILENAME)) {
+            inboundDevices = new ArrayList<PairedDevice>();
+            BaseAdapter listAdapter = getListAdapter();
+            listAdapter.notifyDataSetChanged();
+            Toast.makeText(this, R.string.delete_all_inbound_notification,
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, R.string.delete_all_inbound_fail_notification,
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showOutboundConfiguration() {

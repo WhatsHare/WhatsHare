@@ -491,6 +491,40 @@ public class Dialogs {
     }
 
     /**
+     * Asks the user for confirmation of a delete all inbound devices operation.
+     * 
+     * <p>
+     * If the user confirms the operation, all devices are removed from the list
+     * of inbound paired devices.
+     * 
+     * @param activity
+     *            the caller activity
+     */
+    public static void confirmUnpairAllInbound(final MainActivity activity) {
+        new PatchedDialogFragment() {
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                // @formatter:off
+                AlertDialog.Builder builder = getBuilder(activity)
+                    .setMessage(
+                        getResources().getString(
+                                R.string.delete_all_inbound_confirm))
+                    .setPositiveButton(
+                        android.R.string.ok, new OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                activity.deleteAllInbound();
+                            }
+                        })
+                    .setNegativeButton(android.R.string.cancel, null);
+                // @formatter:on
+                return builder.create();
+            }
+        }.show(activity.getSupportFragmentManager(), "removeAllInbound");
+    }
+
+    /**
      * Shows a dialog informing the user that no outbound device is currently
      * configured, and takes the user to the {@link PairOutboundActivity}.
      * 

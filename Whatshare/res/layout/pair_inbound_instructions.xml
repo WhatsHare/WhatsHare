@@ -25,7 +25,7 @@
             android:id="@+id/instructions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_horizontal|top"
             android:layout_margin="12dp"
             android:drawableBottom="@drawable/qr_example"
             android:drawablePadding="12dp"

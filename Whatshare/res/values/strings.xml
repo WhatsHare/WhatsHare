@@ -73,7 +73,7 @@
     <string name="msg_default_format">Format</string>
     <string name="msg_default_meta">Metadata</string>
     <string name="msg_default_mms_subject">Hi</string>
-    <string name="msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
+    <string name="msg_default_status">Place the QR code inside the viewfinder rectangle to scan it.</string>
     <string name="msg_default_time">Time</string>
     <string name="msg_default_type">Type</string>
     <string name="msg_encode_contents_failed">Could not encode a barcode from the data provided.</string>
@@ -175,6 +175,9 @@
     <string name="remove_inbound_paired_message">Remove %1$s from the list of paired devices?\n\nThis will make WhatsHare ignore all messages coming from %1$s</string>
     <string name="remove_outbound_paired_message">Unpair %1$s?\n\nYou won\'t be able to share content using %1$s\'s WhatsHare until you pair it again</string>
     <string name="delete_file_saved_inbound">Delete all inbound pairings</string>
+    <string name="delete_all_inbound_confirm">Remove all paired devices?\n\nThis will make WhatsHare ignore all incoming messages until you pair some new device</string>
+    <string name="delete_all_inbound_notification">All devices unpaired</string>
+    <string name="delete_all_inbound_fail_notification">Couldn\'t unpair devices</string>
     <string name="device_id_chooser_title">Choose an ID for the device</string>
     <string name="at_least_one_char">must be at least 1 character long</string>
     <string name="wrong_char">max 30 chars, digits, letters, \'-\', \'_\' or whitespaces only</string>

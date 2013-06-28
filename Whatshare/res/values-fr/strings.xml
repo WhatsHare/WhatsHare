@@ -68,7 +68,7 @@
   <string name="msg_default_format">Format</string>
   <string name="msg_default_meta">Métadonnées</string>
   <string name="msg_default_mms_subject">Salut</string>
-  <string name="msg_default_status">Placer un code barre à l\'intérieur du rectangle pour le scanner.</string>
+  <string name="msg_default_status">Placer un code QR à l\'intérieur du rectangle pour le scanner.</string>
   <string name="msg_default_time">Temps</string>
   <string name="msg_default_type">Type</string>
   <string name="msg_encode_contents_failed">Impossible de créer le code-barres à partir des données fournies.</string>

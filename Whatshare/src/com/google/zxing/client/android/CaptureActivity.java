@@ -49,7 +49,6 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -65,14 +64,12 @@ import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.camera.CameraManager;
-import com.google.zxing.client.android.history.HistoryActivity;
 import com.google.zxing.client.android.history.HistoryItem;
 import com.google.zxing.client.android.history.HistoryManager;
 import com.google.zxing.client.android.result.ResultButtonListener;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
 import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
-import com.google.zxing.client.android.share.ShareActivity;
 
 /**
  * This activity opens the camera and does the actual scanning on a background
@@ -341,33 +338,6 @@ public final class CaptureActivity extends Activity implements
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.capture, menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        switch (item.getItemId()) {
-        case R.id.menu_share:
-            intent.setClassName(this, ShareActivity.class.getName());
-            startActivity(intent);
-            break;
-        case R.id.menu_history:
-            intent.setClassName(this, HistoryActivity.class.getName());
-            startActivityForResult(intent, HISTORY_REQUEST_CODE);
-            break;
-        case R.id.menu_settings:
-            intent.setClassName(this, PreferencesActivity.class.getName());
-            startActivity(intent);
-            break;
-        case R.id.menu_help:
-            intent.setClassName(this, HelpActivity.class.getName());
-            startActivity(intent);
-            break;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-        return true;
     }
 
     @Override

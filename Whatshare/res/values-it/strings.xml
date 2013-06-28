@@ -72,7 +72,7 @@
     <string name="msg_default_format">Formato</string>
     <string name="msg_default_meta">Metadati</string>
     <string name="msg_default_mms_subject">Ciao</string>
-    <string name="msg_default_status">Posiziona un codice a barre dentro il mirino rettangolare per la scansione.</string>
+    <string name="msg_default_status">Posiziona il QR code dentro il mirino rettangolare per la scansione.</string>
     <string name="msg_default_time">Tempo</string>
     <string name="msg_default_type">Tipo</string>
     <string name="msg_encode_contents_failed">Impossibile codificare un codice a barre dai dati forniti.</string>
@@ -171,6 +171,9 @@
     <string name="remove_inbound_paired_message">Disassociare %1$s?\n\nWhatsHare ignorerà tutti i messaggi provenienti da %1$s</string>
     <string name="remove_outbound_paired_message">Disassociare %1$s?\n\nNon si potranno più condividere messaggi utilizzando WhatsHare installato su %1$s finché non verrà associato di nuovo</string>
     <string name="delete_file_saved_inbound">Rimuovi tutti i dispositivi in ingresso associati</string>
+    <string name="delete_all_inbound_confirm">Disassociare tutti i dispositivi in ingresso?\n\nWhatsHare ignorerà tutti i messaggi in ingresso finché non verrà associato un nuovo dispositivo</string>
+    <string name="delete_all_inbound_notification">Disassociati tutti i dispositivi</string>
+    <string name="delete_all_inbound_fail_notification">Impossibile disassociare tutti i dispositivi</string>
     <string name="device_id_chooser_title">Scegli un ID per il dispositivo</string>
     <string name="at_least_one_char">almeno 1 carattere</string>
     <string name="wrong_char">max 30 caratteri, solo lettere, cifre, \'-\', \'_\' o spazi</string>
