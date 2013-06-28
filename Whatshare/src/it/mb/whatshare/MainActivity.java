@@ -385,16 +385,19 @@ public class MainActivity extends FragmentActivity {
      * Removes all inbound paired devices.
      */
     public void deleteAllInbound() {
-        if (getApplicationContext().deleteFile(INBOUND_DEVICES_FILENAME)) {
-            inboundDevices = new ArrayList<PairedDevice>();
-            BaseAdapter listAdapter = getListAdapter();
-            listAdapter.notifyDataSetChanged();
-            Toast.makeText(this, R.string.delete_all_inbound_notification,
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, R.string.delete_all_inbound_fail_notification,
-                    Toast.LENGTH_SHORT).show();
+        if (!getApplicationContext().deleteFile(INBOUND_DEVICES_FILENAME)) {
+            if (!inboundDevices.isEmpty()) {
+                Toast.makeText(this,
+                        R.string.delete_all_inbound_fail_notification,
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
+        inboundDevices = new ArrayList<PairedDevice>();
+        BaseAdapter listAdapter = getListAdapter();
+        listAdapter.notifyDataSetChanged();
+        Toast.makeText(this, R.string.delete_all_inbound_notification,
+                Toast.LENGTH_SHORT).show();
     }
 
     private void showOutboundConfiguration() {
