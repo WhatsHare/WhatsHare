@@ -53,6 +53,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.ExceptionReporter;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
 
@@ -439,6 +440,13 @@ public class MainActivity extends FragmentActivity {
         analytics = GoogleAnalytics.getInstance(this);
         tracker = analytics.getTracker(getResources().getString(
                 R.string.ga_trackingId));
+        Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread
+                .getDefaultUncaughtExceptionHandler();
+        if (uncaughtExceptionHandler instanceof ExceptionReporter) {
+            ExceptionReporter exceptionReporter = (ExceptionReporter) uncaughtExceptionHandler;
+            exceptionReporter
+                    .setExceptionParser(new AnalyticsExceptionParser());
+        }
         analytics.setDefaultTracker(tracker);
         // start the registration process if needed
         GCMIntentService.registerWithGCM(this);
