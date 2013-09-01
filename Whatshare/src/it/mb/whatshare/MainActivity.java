@@ -38,6 +38,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.util.Pair;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -357,6 +358,10 @@ public class MainActivity extends FragmentActivity {
         case R.id.menu_delete_saved_inbound:
             onDeleteSavedInboundPressed();
             break;
+        case R.id.menu_tell_friends:
+            tracker.sendEvent("ui", "button_press", "tell_friends", 0L);
+            onTellFriendsSelected();
+            break;
         case R.id.about:
             tracker.sendEvent("ui", "button_press", "about", 0L);
             Dialogs.showAbout(this);
@@ -380,6 +385,17 @@ public class MainActivity extends FragmentActivity {
     private void onDeleteSavedInboundPressed() {
         tracker.sendEvent("ui", "button_press", "delete_all_inbound", 0L);
         Dialogs.confirmUnpairAllInbound(this);
+    }
+
+    private void onTellFriendsSelected() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/html");
+        intent.putExtra(Intent.EXTRA_SUBJECT,
+                getResources().getString(R.string.email_subject));
+        intent.putExtra(Intent.EXTRA_TEXT,
+                Html.fromHtml(getResources().getString(R.string.email_body)));
+        startActivity(Intent.createChooser(intent,
+                getResources().getString(R.string.email_intent_msg)));
     }
 
     /**

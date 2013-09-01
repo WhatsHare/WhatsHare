@@ -154,7 +154,7 @@
     <string name="qr_input_hint">Codice ottenuto</string>
     <string name="qr_input_submit">Invia</string>
     <string name="qr_desc">Un QR code per accoppiare dispositivi</string>
-    <string name="invalidshorturl">Il codice deve contenere 5 caratteri alfanumerici</string>
+    <string name="invalidshorturl">Il codice deve contenere al massimo 6 caratteri alfanumerici</string>
     <string name="successful_pairing">%1$s è stato associato correttamente!\n\nOra puoi usare WhatsHare per condividere contenuto dal tuo %1$s!</string>
     <string name="failed_pairing">Impossibile associare i due dispositivi, prova a fotografare di nuovo il QR code!</string>
     <string name="paired_inbound">Ricevi da</string>
@@ -203,5 +203,8 @@
     <string name="action_settings">Impostazioni</string>
     <string name="title_activity_send_to_app">WhatsHare</string>
     <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
-
+    <string name="tell_friends">Suggerisci WhatsHare ai tuoi amici</string>
+    <string name="email_subject">Prova quest\'app!</string>
+    <string name="email_body">WhatsHare è un\'app gratuita per Android e Chrome che ti permette di condividere link e testo fra i tuoi dispositivi Android e dal browser sul tuo computer ai dispositivi Android!&lt;p>La puoi scaricare:&lt;br>dal &lt;a href=\"\">Google Play Store&lt;/a> (per l\'app Android)&lt;br>dal &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\">Chrome Web Store&lt;/a> (per l\'app Chrome)&lt;p>Ciao!</string>
+    <string name="email_intent_msg">Invia l\'email usando</string>
 </resources>

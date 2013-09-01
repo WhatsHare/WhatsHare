@@ -2,7 +2,8 @@
  * ShareActivity.java Created on 16 Mar 2013 Copyright 2013 Michele Bonazza
  * <emmepuntobi@gmail.com>
  * 
- * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of WhatsHare.
+ * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of
+ * WhatsHare.
  * 
  * WhatsHare is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -211,7 +212,7 @@ public class PairOutboundActivity extends FragmentActivity {
             + "&shortUrl=http://goo.gl/%s";
     private static final Pattern EXPANDED_URL = Pattern
             .compile("http://([^/]+)/(\\d+)\\?model\\=([^&]+)&yourid=([a-zA-Z0-9\\-\\_]+)&id=([a-zA-Z0-9\\-\\_]+)");
-    private static final int MAX_SHORTENED_URL_LENGTH = 5;
+    private static final int MAX_SHORTENED_URL_LENGTH = 6;
     private static String assignedID;
     private EditText inputCode;
     private List<Integer> randomSeed;
@@ -458,7 +459,7 @@ public class PairOutboundActivity extends FragmentActivity {
     public void onSubmitPressed(View view) {
         String code = inputCode.getText().toString();
         Utils.debug("user submitted %s", code);
-        if (code.length() != MAX_SHORTENED_URL_LENGTH) {
+        if (code.length() > MAX_SHORTENED_URL_LENGTH) {
             inputCode.setError(getString(R.string.invalidshorturl));
             keepKeyboardVisible = true;
         } else {

@@ -158,7 +158,7 @@
     <string name="whatsapp_not_installed">To send messages through Whatsapp, Whatsapp needs to be installed!</string>
     <string name="whatsapp_not_installed_dont_mind">Got it, stop telling me</string>
     <string name="action_settings">Settings</string>
-    <string name="invalidshorturl">Code must be 5 characters/digits</string>
+    <string name="invalidshorturl">Code must be 5 or 6 characters/digits</string>
     <string name="successful_pairing">%1$s has been successfully paired!\n\nYou can now use WhatsHare to share content from your %1$s!</string>
     <string name="failed_pairing">Couldn\'t pair devices, try to take another picture of the QR code in a few seconds!</string>
     <string name="paired_inbound">Receive from</string>
@@ -205,5 +205,9 @@
     <string name="description_about_dialog">You can download  <a href="https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib">the companion Chrome Extension</a> from your desktop/laptop.\n\n<a href="https://github.com/micheleb/WhatsHare">Home page on GitHub</a>.\n\n\u00A9 2013 <a href="mailto:emmepuntobi@gmail.com">Michele Bonazza</a>\n\nAll code is licensed under the <a href="http://www.gnu.org/licenses/gpl-3.0.txt">GNU GPL version 3</a>.\n\nThe smartphone icon is derivative work from G. Hagedorn\'s one, released under [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a>\n\nAll other graphics are licensed under [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>].</string>
     <string name="title_activity_send_to_app">WhatsHare</string>
     <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
+    <string name="tell_friends">Tell friends about WhatsHare</string>
+    <string name="email_subject">Check this app out!</string>
+    <string name="email_body">WhatsHare is a free app for Android and Chrome that lets you share text and links between your Android devices, and from your browser to your Android devices!&lt;p>You can get it from:&lt;br>* &lt;a href=\"\">the Google Play Store&lt;/a> (for the Android app)&lt;br>* &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\">the Chrome Web Store&lt;/a> (for the Chrome app)&lt;p>Cheers!</string>
+    <string name="email_intent_msg">Send email with</string>
 
 </resources>
