@@ -140,6 +140,9 @@
     <string name="wifi_changing_network">Richiesta di connessione alla rete\u2026</string>
     <string name="wifi_ssid_label">Nome rete</string>
     <string name="wifi_type_label">Tipo</string>
+    
+    
+    
     <string name="qr_code_fail">QR code non valido; stai fotografando il QR code giusto?</string>
     <string name="qr_code_retry">Riprova</string>
     <string name="please_wait">Attendere</string>
@@ -205,6 +208,6 @@
     <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
     <string name="tell_friends">Suggerisci WhatsHare ai tuoi amici</string>
     <string name="email_subject">Prova quest\'app!</string>
-    <string name="email_body">WhatsHare è un\'app gratuita per Android e Chrome che ti permette di condividere link e testo fra i tuoi dispositivi Android e dal browser sul tuo computer ai dispositivi Android!&lt;p>La puoi scaricare:&lt;br>dal &lt;a href=\"\">Google Play Store&lt;/a> (per l\'app Android)&lt;br>dal &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\">Chrome Web Store&lt;/a> (per l\'app Chrome)&lt;p>Ciao!</string>
+    <string name="email_body">WhatsHare è un\'app gratuita per Android e Chrome che ti permette di condividere link e testo fra i tuoi dispositivi Android e dal browser sul tuo computer ai dispositivi Android!&lt;p>La puoi scaricare:&lt;br>dal &lt;a href=\"https://play.google.com/store/apps/details?id=it.mb.whatshare\">Google Play Store&lt;/a> (per l\'app Android)&lt;br>dal &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\">Chrome Web Store&lt;/a> (per l\'app Chrome)&lt;p>Ciao!</string>
     <string name="email_intent_msg">Invia l\'email usando</string>
 </resources>

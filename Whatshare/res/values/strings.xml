@@ -20,7 +20,7 @@
 <resources>
 
     <!-- ZXING strings -->
-    <string name="app_name">Barcode Scanner</string>
+    <string name="app_name">WhatsHare</string>
     <string name="app_picker_name">Applications</string>
     <string name="bookmark_picker_name">Bookmarks</string>
     <string name="button_add_calendar">Add to calendar</string>
@@ -142,6 +142,8 @@
     <string name="wifi_ssid_label">Network Name</string>
     <string name="wifi_type_label">Type</string>
     <!-- END ZXING strings -->
+    
+    
     <string name="whatshare">WhatsHare</string>
     <string name="qr_code_fail">The QR code is invalid; are you sure that you\'re taking a picture at the right display?</string>
     <string name="qr_code_retry">Try again</string>
@@ -202,12 +204,12 @@
     <string name="title_activity_about">About</string>
     <string name="title_about_dialog">WhatsHare %s</string>
     <string name="build_date_about">Built on %s</string>
-    <string name="description_about_dialog">You can download  <a href="https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib">the companion Chrome Extension</a> from your desktop/laptop.\n\n<a href="https://github.com/micheleb/WhatsHare">Home page on GitHub</a>.\n\n\u00A9 2013 <a href="mailto:emmepuntobi@gmail.com">Michele Bonazza</a>\n\nAll code is licensed under the <a href="http://www.gnu.org/licenses/gpl-3.0.txt">GNU GPL version 3</a>.\n\nThe smartphone icon is derivative work from G. Hagedorn\'s one, released under [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a>\n\nAll other graphics are licensed under [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>].</string>
+    <string name="description_about_dialog">You can download  <a href="https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib">the companion Chrome Extension</a> from your desktop/laptop.\n\n<a href="https://github.com/micheleb/WhatsHare">Home page on GitHub</a>.\n\n\u00A9 2013 <a href="mailto:emmepuntobi@gmail.com">Michele Bonazza</a>\n\nAll code is licensed under the <a href="http://www.gnu.org/licenses/gpl-3.0.txt">GNU GPL version 3</a>.\n\nThe smartphone icon is derivative work from G. Hagedorn\'s one, released under [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3ASmartphone_icon.svg">via Wikimedia Commons</a>\n\nAll other graphics are licensed under [<a href="http://creativecommons.org/licenses/by-sa/3.0">CC-BY-SA-3.0</a>].\n\nUn agradecimiento especial a Isa Sánchez Tello y Sergio Villaverde Herrera para la traducción en español!</string>
     <string name="title_activity_send_to_app">WhatsHare</string>
     <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
     <string name="tell_friends">Tell friends about WhatsHare</string>
     <string name="email_subject">Check this app out!</string>
-    <string name="email_body">WhatsHare is a free app for Android and Chrome that lets you share text and links between your Android devices, and from your browser to your Android devices!&lt;p>You can get it from:&lt;br>* &lt;a href=\"\">the Google Play Store&lt;/a> (for the Android app)&lt;br>* &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\">the Chrome Web Store&lt;/a> (for the Chrome app)&lt;p>Cheers!</string>
+    <string name="email_body">WhatsHare is a free app for Android and Chrome that lets you share text and links between your Android devices, and from your browser to your Android devices!&lt;p>You can get it from:&lt;br>* &lt;a href=\"https://play.google.com/store/apps/details?id=it.mb.whatshare\">the Google Play Store&lt;/a> (for the Android app)&lt;br>* &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\">the Chrome Web Store&lt;/a> (for the Chrome app)&lt;p>Cheers!</string>
     <string name="email_intent_msg">Send email with</string>
 
 </resources>

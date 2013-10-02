@@ -20,12 +20,12 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.mb.whatshare"
-    android:versionCode="17"
-    android:versionName="1.2.11" >
+    android:versionCode="18"
+    android:versionName="1.2.12" >
 
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="18" />
 
     <supports-screens
         android:largeScreens="true"

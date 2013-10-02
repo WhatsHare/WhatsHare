@@ -2,7 +2,8 @@
  * SendToAppActivity.java Created on 16 Jun 2013 Copyright 2013 Michele Bonazza
  * <emmepuntobi@gmail.com>
  * 
- * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of WhatsHare.
+ * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of
+ * WhatsHare.
  * 
  * WhatsHare is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -18,8 +19,11 @@
  */
 package it.mb.whatshare;
 
+import java.util.regex.Pattern;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -31,6 +35,8 @@ import com.google.analytics.tracking.android.EasyTracker;
  * @author Michele Bonazza
  */
 public class SendToAppActivity extends Activity {
+
+    private static final String LINK_REGEX = "http(s)?://[^\\s]+";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +57,11 @@ public class SendToAppActivity extends Activity {
             if (intent.getExtras() != null) {
                 String message = intent.getStringExtra("message");
                 if (message != null) {
-                    startActivity(createPlainIntent(intent
-                            .getStringExtra("message")));
+                    if (Pattern.matches(LINK_REGEX, message)) {
+                        startActivity(createBrowserIntent(message));
+                    } else {
+                        startActivity(createPlainIntent(message));
+                    }
                 } else {
                     Utils.debug("QUE?");
                 }
@@ -92,9 +101,24 @@ public class SendToAppActivity extends Activity {
      *         <tt>message</tt> stored as <tt>EXTRA_TEXT</tt>
      */
     public static Intent createPlainIntent(String message) {
-        Intent i = new Intent(android.content.Intent.ACTION_SEND);
+        Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("text/plain");
         i.putExtra(Intent.EXTRA_TEXT, message);
+        return i;
+    }
+
+    /**
+     * Creates a share Intent by passing the argument <tt>message</tt> to
+     * {@link Intent#setData(android.net.Uri)}.
+     * 
+     * @param message
+     *            the message to be stored by the returned intent
+     * @return a share intent of type {@link Intent#ACTION_VIEW} with the
+     *         argument <tt>message</tt> stored as URL
+     */
+    public static Intent createBrowserIntent(String message) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(message));
         return i;
     }
 
