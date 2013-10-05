@@ -14,3 +14,5 @@ Download the companion Chrome Extension to enable sharing between your desktop/n
 GitHub project for the browser extension can be found at https://github.com/micheleb/WhatsHare-Chrome
 
 All code is released under the GPLv3.
+
+-- Michele (okienow)
