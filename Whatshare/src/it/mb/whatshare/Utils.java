@@ -1,8 +1,6 @@
 /**
- * Utils.java Created on Oct 19, 2012 Copyright 2012 Michele Bonazza
- * <emmepuntobi@gmail.com>
- * 
- * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of WhatsHare.
+ * Utils.java Created on Oct 19, 2012 Copyright 2013 Michele Bonazza
+ * <emmepuntobi@gmail.com> This file is part of WhatsHare.
  * 
  * WhatsHare is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -25,6 +23,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -42,11 +44,36 @@ public final class Utils {
 
     private static final int MAX_MESSAGE_LENGTH = 4000;
     private static final String TAG = "Whatshare";
+    private static boolean debuggableFlagChecked = false;
+    private static boolean debugEnabled = false;
 
     /*
      * Static methods only!
      */
     private Utils() {
+    }
+
+    /**
+     * Checks whether the app that's running has the
+     * <code>android:debuggable</code> flag set, and enables/disables all log
+     * calls accordingly.
+     * 
+     * @param context
+     *            the caller activity
+     */
+    public static void checkDebug(Context context) {
+        if (!debuggableFlagChecked) {
+            debuggableFlagChecked = true;
+            PackageManager manager = context.getPackageManager();
+            try {
+                PackageInfo info = manager.getPackageInfo(
+                        context.getPackageName(), 0);
+                debugEnabled = (info.applicationInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
+            } catch (NameNotFoundException e) {
+                e.printStackTrace();
+                // let's keep debug disabled
+            }
+        } // else it's already been checked once, don't check anymore
     }
 
     /**
@@ -113,6 +140,8 @@ public final class Utils {
      *            <tt>message</tt> is a format string
      */
     public static void debug(String message, Object... formatParms) {
+        if (!debugEnabled)
+            return;
         int offset = 0;
         if (formatParms.length > 0) {
             message = String.format(message, formatParms);

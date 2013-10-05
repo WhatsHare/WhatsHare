@@ -2,7 +2,7 @@
  * GCMIntentService.java Created on 19 Jun 2013 Copyright 2013 Michele Bonazza
  * <emmepuntobi@gmail.com>
  * 
- * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of WhatsHare.
+ * This file is part of WhatsHare.
  * 
  * WhatsHare is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -93,7 +93,7 @@ public class GCMIntentService extends GCMBaseIntentService {
      * Creates a new intent service for the application.
      */
     public GCMIntentService() {
-        super("213874322054");
+        super(PROJECT_SERVER_ID);
     }
 
     /**
@@ -192,6 +192,7 @@ public class GCMIntentService extends GCMBaseIntentService {
      */
     @Override
     protected void onError(Context arg0, String arg1) {
+        Utils.checkDebug(arg0);
         try {
             REGISTRATION_LOCK.lock();
             Utils.debug("Cannot register: %s", arg1);
@@ -217,6 +218,7 @@ public class GCMIntentService extends GCMBaseIntentService {
      */
     @Override
     protected boolean onRecoverableError(Context context, String errorId) {
+        Utils.checkDebug(context);
         return super.onRecoverableError(context, errorId);
     }
 
@@ -229,6 +231,7 @@ public class GCMIntentService extends GCMBaseIntentService {
      */
     @Override
     protected void onMessage(Context arg0, Intent arg1) {
+        Utils.checkDebug(arg0);
         Bundle bundle = arg1.getExtras();
         String sender = bundle.getString("sender");
         Utils.debug("new incoming message from %s: %s", sender,
@@ -307,6 +310,7 @@ public class GCMIntentService extends GCMBaseIntentService {
      */
     @Override
     protected void onRegistered(Context arg0, String arg1) {
+        Utils.checkDebug(arg0);
         try {
             REGISTRATION_LOCK.lock();
             Utils.debug("Now app is registered with ID %s", arg1);
@@ -327,7 +331,6 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onUnregistered(Context arg0, String arg1) {
         // nothing to do here
-
     }
 
 }

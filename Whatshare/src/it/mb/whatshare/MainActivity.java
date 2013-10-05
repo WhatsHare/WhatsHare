@@ -3,8 +3,7 @@
  * 
  * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com>
  * 
- * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> This file is part of
- * WhatsHare.
+ * This file is part of WhatsHare.
  * 
  * WhatsHare is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -453,6 +452,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.checkDebug(this);
         analytics = GoogleAnalytics.getInstance(this);
         tracker = analytics.getTracker(getResources().getString(
                 R.string.ga_trackingId));
