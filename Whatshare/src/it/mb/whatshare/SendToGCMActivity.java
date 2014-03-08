@@ -268,8 +268,8 @@ public class SendToGCMActivity extends FragmentActivity {
             String name = json.getString("name");
             String type = json.getString("type");
             String assignedID = json.getString("assignedID");
-            return new Pair<PairedDevice, String>(new PairedDevice(name, type),
-                    assignedID);
+            return new Pair<PairedDevice, String>(new PairedDevice(assignedID,
+                    name, type), assignedID);
         } catch (JSONException e) {
             e.printStackTrace();
         }

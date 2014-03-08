@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
  * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> 
  *
@@ -15,8 +15,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * WhatsHare. If not, see <http://www.gnu.org/licenses/>.
--->
-<!--
+--><!--
  Copyright (C) 2012 ZXing authors
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,9 +29,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
--->
-<resources>
-
+--><resources>
     <string name="app_name">WhatsHare</string>
     <string name="app_picker_name">Aplicaciones</string>
     <string name="bookmark_picker_name">Marcadores</string>
@@ -114,7 +111,7 @@
     <string name="preferences_bulk_mode_summary">Escanear y guardar muchos códigos de barras de forma continua</string>
     <string name="preferences_bulk_mode_title">Modo masivo de escaneo</string>
     <string name="preferences_copy_to_clipboard_title">Copiar al portapapeles</string>
-    <string name="preferences_custom_product_search_summary" formatted="false">Sustituciones: %s = contenido, %f = formato, %t = tipo</string>
+    <string formatted="false" name="preferences_custom_product_search_summary">Sustituciones: %s = contenido, %f = formato, %t = tipo</string>
     <string name="preferences_custom_product_search_title">Búsqueda de productos con URL personalizada</string>
     <string name="preferences_decode_1D_title">Códigos de barras 1D</string>
     <string name="preferences_decode_Data_Matrix_title">Data Matrix</string>
@@ -154,7 +151,6 @@
     <string name="wifi_changing_network">Solicitando conexión a la red\u2026</string>
     <string name="wifi_ssid_label">Nombre de red</string>
     <string name="wifi_type_label">Tipo</string>
-
     <!-- End Zxing strings -->
     <string name="qr_code_fail">El código QR no es válido. ¿Está seguro de que está tomando la imagen en la pantalla correcta?</string>
     <string name="qr_code_retry">Inténtelo de nuevo</string>
@@ -162,8 +158,8 @@
     <string name="qr_input_submit">Enviar</string>
     <string name="qr_desc">Código QR de vinculación</string>
     <string name="please_wait">Por favor espere</string>
-    <string name="wait_registration">Registrando la aplicación para el primer uso&#8230;</string>
-    <string name="wait_message">Generando un código único para vincular este dispositivo&#8230;</string>
+    <string name="wait_registration">Registrando la aplicación para el primer uso…</string>
+    <string name="wait_message">Generando un código único para vincular este dispositivo…</string>
     <string name="code_dialog">Escriba este código en el otro dispositivo o en el campo de texto de la Extensión de Chrome:</string>
     <string name="code_dialog_reminder">El código distingue entre mayúsculas y minúsculas (¡es importante!)</string>
     <string name="code_dialog_fail">No se pudo generar un ID para este dispositivo utilizando el código QR. \n\nLos servidores Google pueden estar cargando, por favor espere unos segundos y vuelva a intentarlo.</string>
@@ -185,23 +181,21 @@
     <string name="selection">selección</string>
     <string name="link">enlace</string>
     <string name="unpair">Desvincular</string>
+    <string name="rename">Renombrar</string>
     <string name="remove_inbound_paired_message">¿Eliminar %1$s de la lista de dispositivos vinculados?\n\nEsto hará que WhatsHare ignore todos los mensajes procedentes de %1$s</string>
     <string name="remove_outbound_paired_message">¿Desvincular %1$s?\n\nUsted no podrá compartir contenidos con %1$s WhatsHare hasta que se vincule de nuevo</string>
     <string name="delete_file_saved_inbound">Eliminar todos los vínculos entrantes</string>
     <string name="delete_all_inbound_confirm">¿Quitar todos los dispositivos vinculados?\n\nEsto hará que WhatsHare ignore todos los mensajes entrantes hasta que usted vincule un nuevo dispositivo</string>
     <string name="delete_all_inbound_notification">Todos los dispositivos desvinculados</string>
     <string name="delete_all_inbound_fail_notification">No se pudo desvincular los dispositivos</string>
-    <string name="device_id_chooser_title">Elija un ID para el dispositivo</string>
     <string name="at_least_one_char">debe tener al menos 1 carácter</string>
     <string name="wrong_char">máximo 30 caracteres, números, letras, \'-\', \'_\' o espacios en blanco</string>
     <string name="id_already_in_use">ID ya está en uso</string>
     <string name="device_paired">Dispositivo añadido %s</string>
-
     <plurals name="added_device">
         <item quantity="one"/>
         <item quantity="other">\ (%d total de vínculos)</item>
     </plurals>
-
     <string name="add_device">Añadir nuevo dispositivo</string>
     <string name="gcm_registration_error">No se pudo registrar WhatsHare con la plataforma de Google Cloud Messaging: %s</string>
     <string name="account_missing">\ Necesita configurar una cuenta de Google en este dispositivo para poder utilizar esta aplicación.</string>
@@ -220,7 +214,7 @@
     <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
     <string name="tell_friends">Cuéntele a sus amigos sobre WhatsHare</string>
     <string name="email_subject">¡Mire esta aplicación!</string>
-    <string name="email_body">WhatsHare es una aplicación gratuita para Android y Chrome que te permite compartir texto y los vínculos entre los dispositivos Android, y desde el navegador a los dispositivos Android &lt;p&gt;Puede obtenerla desde:&lt;br&gt;* &lt;a href=\"https://play.google.com/store/apps/details?id=it.mb.whatshare\"&gt;Google Play Store&lt;/a&gt; (para la aplicación Android) &lt;br&gt;* &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib0\"&gt;Chrome Web Store&lt;/a&gt; (para la aplicación Chrome)&lt;p&gt;¡Saludos!</string>
+    <string name="email_body">WhatsHare es una aplicación gratuita para Android y Chrome que te permite compartir texto y los vínculos entre los dispositivos Android, y desde el navegador a los dispositivos Android &amp;lt;p&amp;gt;Puede obtenerla desde:&amp;lt;br&amp;gt;* &amp;lt;a href=\"https://play.google.com/store/apps/details?id=it.mb.whatshare\"&amp;gt;Google Play Store&amp;lt;/a&amp;gt; (para la aplicación Android) &amp;lt;br&amp;gt;* &amp;lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib0\"&amp;gt;Chrome Web Store&amp;lt;/a&amp;gt; (para la aplicación Chrome)&amp;lt;p&amp;gt;¡Saludos!</string>
     <string name="email_intent_msg">Enviar correo electrónico con</string>
-
+    <string name="device_name_chooser_title">Elija un ID para el dispositivo</string>
 </resources>

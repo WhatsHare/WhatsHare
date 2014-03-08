@@ -91,15 +91,16 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
      * 
      * @param mainActivity
      *            the caller activity
-     * @param deviceId
-     *            the ID (name) chosen by the user for the device being paired
+     * @param deviceName
+     *            the name chosen by the user for the device being paired
      * @param deviceType
      *            the model of the device, as suggested by the device itself
      */
-    CallGooGlInbound(MainActivity mainActivity, String deviceId,
+    CallGooGlInbound(MainActivity mainActivity, String deviceName,
             String deviceType) {
         this.mainActivity = mainActivity;
-        deviceToBePaired = new PairedDevice(deviceId, deviceType);
+        deviceToBePaired = new PairedDevice(PairedDevice.getNextID(),
+                deviceName, deviceType);
     }
 
     /*
@@ -144,17 +145,19 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
             registrationID = GCMIntentService.getRegistrationID();
             String encodedID = encrypt(params[0], registrationID.toCharArray());
             String encodedAssignedID = encrypt(params[0],
-                    String.valueOf(deviceToBePaired.name.hashCode())
+                    String.valueOf(deviceToBePaired.id.hashCode())
                             .toCharArray());
             Utils.debug(
                     "shortening, this device's encodedID is %s, paired devices's"
                             + " encodedAssignedID is %s", encodedID,
                     encodedAssignedID);
+
             googl = shorten(encodedID, encodedAssignedID);
             if (googl != null) {
                 googl = googl.substring(googl.lastIndexOf('/') + 1);
                 saveInboundPairing(deviceToBePaired);
             }
+
             mainActivity.refreshInboundDevicesList();
         } catch (CantRegisterWithGCMException e) {
             registrationError = e.getMessageID();
@@ -174,9 +177,11 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
                     "{\"longUrl\": \"%s\"}",
                     getURL(encodedID, encodedAssignedID))));
             post.setHeader("Content-Type", "application/json");
+
             long timeout = RETRY_SLEEP_TIME * tries;
             HttpParams params = new BasicHttpParams();
             DefaultHttpClient client = updateTimeout(params, timeout);
+
             String response = null;
             while (response == null && tries < RETRY_COUNT) {
                 try {
@@ -196,6 +201,7 @@ class CallGooGlInbound extends AsyncTask<int[], Void, Void> {
                 }
             }
             Utils.debug("response is %s", response);
+
             if (response != null) {
                 JSONObject jsonResponse = new JSONObject(response);
                 shortURL = jsonResponse.getString("id");

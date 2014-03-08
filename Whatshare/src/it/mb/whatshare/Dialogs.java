@@ -52,7 +52,6 @@ import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ForegroundColorSpan;
-import android.util.Pair;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -82,6 +81,82 @@ import android.widget.Toast;
  */
 @SuppressLint("ValidFragment")
 public class Dialogs {
+
+    private static class DeviceNameChooserPrompt implements
+            DialogInterface.OnShowListener {
+
+        private final AlertDialog alertDialog;
+        private final EditText input;
+        private final MainActivity activity;
+        private final Callback<String> callback;
+
+        private DeviceNameChooserPrompt(AlertDialog alertDialog,
+                EditText input, MainActivity activity, Callback<String> callback) {
+            this.alertDialog = alertDialog;
+            this.input = input;
+            this.activity = activity;
+            this.callback = callback;
+        }
+
+        @Override
+        public void onShow(DialogInterface dialog) {
+            Button b = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            b.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    input.setError(null);
+                    String deviceName = input.getText().toString();
+                    if (!Pattern.matches(MainActivity.VALID_DEVICE_NAME,
+                            deviceName)) {
+                        if (deviceName.length() < 1) {
+                            setError(input, R.string.at_least_one_char,
+                                    activity);
+                        } else {
+                            setError(input, R.string.wrong_char, activity);
+                        }
+                    } else {
+                        callback.setParam(deviceName).run();
+                        alertDialog.dismiss();
+                    }
+                }
+            });
+        }
+    }
+
+    private static abstract class Callback<T> implements Runnable {
+
+        private T param;
+
+        /**
+         * Sets the parameter that the executor of the callback can use inside
+         * its {@link #run()} implementation.
+         * 
+         * <p>
+         * This method <b>must always</b> be called <b>before</b> calling
+         * {@link #run()}
+         * 
+         * @param arg
+         *            the parameter to set
+         * @return a reference to this class, so calls can be chained
+         */
+        public Callback<T> setParam(T arg) {
+            this.param = arg;
+            return this;
+        }
+
+        /**
+         * Returns the parameter that was set by whomever is calling
+         * {@link #run()} on this callback.
+         * 
+         * @return the parameter that was set by the caller
+         */
+        public T getParam() {
+            return param;
+        }
+    }
+
+    private static final String CUSTOM_TYPEFACE_PATH = "fonts/PTM55FT.ttf";
 
     /**
      * Shows a dialog informing the user that the QR code she's taken a picture
@@ -120,13 +195,11 @@ public class Dialogs {
      * {@link MainActivity}.
      * 
      * @param device
-     *            the outbound device to be paired together with the ID (name)
-     *            chosen by the user for the new device
+     *            the outbound device to be paired
      * @param activity
      *            the caller activity
      */
-    public static void onPairingOutbound(
-            final Pair<PairedDevice, String> device,
+    public static void onPairingOutbound(final PairedDevice device,
             final FragmentActivity activity) {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -134,10 +207,9 @@ public class Dialogs {
                 try {
                     builder.setMessage(getString(R.string.failed_pairing));
                     if (device != null) {
-                        PairOutboundActivity.setAssignedID(device.second);
                         PairOutboundActivity.savePairing(device, activity);
                         builder.setMessage(getResources().getString(
-                                R.string.successful_pairing, device.first.type));
+                                R.string.successful_pairing, device.type));
                     }
                 } catch (IOException e) {
                     // TODO let user know
@@ -222,7 +294,7 @@ public class Dialogs {
                     TextView message = (TextView) layout
                             .findViewById(R.id.pairingCode);
                     Typeface typeFace = Typeface.createFromAsset(
-                            activity.getAssets(), "fonts/PTM55FT.ttf");
+                            activity.getAssets(), CUSTOM_TYPEFACE_PATH);
                     message.setTypeface(typeFace);
                     message.setText(googl);
                     builder.setView(layout);
@@ -258,9 +330,8 @@ public class Dialogs {
     }
 
     /**
-     * Shows a dialog to get an ID (name) for the inbound device being paired
-     * and starts a new {@link CallGooGlInbound} action if the chosen name is
-     * valid and not in use.
+     * Shows a dialog to get a name for the inbound device being paired and
+     * starts a new {@link CallGooGlInbound} action if the chosen name is valid.
      * 
      * @param deviceType
      *            the model of the device being paired as suggested by the
@@ -270,7 +341,7 @@ public class Dialogs {
      * @param activity
      *            the caller activity
      */
-    public static void promptForInboundID(final String deviceType,
+    public static void promptForInboundName(final String deviceType,
             final int[] sharedSecret, final MainActivity activity) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
@@ -284,63 +355,98 @@ public class Dialogs {
                         input.setInputType(InputType.TYPE_CLASS_TEXT);
                         input.setText(deviceType);
                         input.setSelection(deviceType.length());
-                        // @formatter:off 
-                        builder.setTitle(R.string.device_id_chooser_title)
-                            .setView(input)
-                            .setPositiveButton(android.R.string.ok, null);
-                        // @formatter:on
+                        // @formatter:off
+						builder.setTitle(R.string.device_name_chooser_title)
+								.setView(input)
+								.setPositiveButton(android.R.string.ok, null);
+						// @formatter:on
                         final AlertDialog alertDialog = builder.create();
                         alertDialog
-                                .setOnShowListener(new DialogInterface.OnShowListener() {
+                                .setOnShowListener(new DeviceNameChooserPrompt(
+                                        alertDialog, input, activity,
+                                        new Callback<String>() {
 
-                                    @Override
-                                    public void onShow(DialogInterface dialog) {
-                                        Button b = alertDialog
-                                                .getButton(AlertDialog.BUTTON_POSITIVE);
-                                        b.setOnClickListener(new View.OnClickListener() {
+
+
+											@Override
+											public void run() {
+												// @formatter:off
+												new CallGooGlInbound(activity,
+														getParam(),
+														deviceType)
+													.execute(sharedSecret);
+
+												((InputMethodManager) activity
+														.getSystemService(Context.INPUT_METHOD_SERVICE))
+														.hideSoftInputFromWindow(
+																input.getWindowToken(),
+																0);
+												// @formatter:on
+                                            }
+                                        }));
+                        return alertDialog;
+                    }
+                };
+                prompt.show(activity.getSupportFragmentManager(), "chooseName");
+            }
+        });
+    }
+
+    /**
+     * Shows a prompt to the user to rename the argument <tt>device</tt>.
+     * 
+     * @param device
+     *            the device to be renamed
+     * @param activity
+     *            the parent activity
+     */
+    public static void promptForNewDeviceName(final PairedDevice device,
+            final MainActivity activity) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                DialogFragment prompt = new PatchedDialogFragment() {
+                    public Dialog onCreateDialog(Bundle savedInstanceState) {
+                        AlertDialog.Builder builder = getBuilder(activity);
+
+                        final EditText input = new EditText(getContext());
+                        input.setInputType(InputType.TYPE_CLASS_TEXT);
+                        input.setText(device.name);
+                        input.setSelection(device.name.length());
+
+                        // @formatter:off
+                        builder.setTitle(R.string.device_name_chooser_title)
+                                .setView(input)
+                                .setPositiveButton(android.R.string.ok, null);
+                        // @formatter:on
+
+                        final AlertDialog alertDialog = builder.create();
+                        alertDialog
+                                .setOnShowListener(new DeviceNameChooserPrompt(
+                                        alertDialog, input, activity,
+                                        new Callback<String>() {
+
+
+
+
+
 
                                             @Override
-                                            public void onClick(View view) {
-                                                input.setError(null);
-                                                String deviceId = input
-                                                        .getText().toString();
-                                                if (!Pattern
-                                                        .matches(
-                                                                MainActivity.VALID_DEVICE_ID,
-                                                                deviceId)) {
-                                                    if (deviceId.length() < 1) {
-                                                        setError(
-                                                                input,
-                                                                R.string.at_least_one_char,
-                                                                activity);
-                                                    } else {
-                                                        setError(
-                                                                input,
-                                                                R.string.wrong_char,
-                                                                activity);
-                                                    }
-                                                } else if (!activity
-                                                        .isValidChoice(deviceId)) {
-                                                    setError(
-                                                            input,
-                                                            R.string.id_already_in_use,
-                                                            activity);
-                                                } else {
-                                                    new CallGooGlInbound(
-                                                            activity, deviceId,
-                                                            deviceType)
-                                                            .execute(sharedSecret);
-                                                    ((InputMethodManager) activity
-                                                            .getSystemService(Context.INPUT_METHOD_SERVICE))
-                                                            .hideSoftInputFromWindow(
-                                                                    input.getWindowToken(),
-                                                                    0);
-                                                    alertDialog.dismiss();
-                                                }
+                                            public void run() {
+                                                // @formatter:off
+                                                device.rename(getParam());
+                                                activity.onSelectedDeviceRenamed();
+
+                                                ((InputMethodManager) activity
+                                                        .getSystemService(Context.INPUT_METHOD_SERVICE))
+                                                        .hideSoftInputFromWindow(
+                                                                input.getWindowToken(),
+                                                                0);
+                                                // @formatter:on
                                             }
-                                        });
-                                    }
-                                });
+                                        }));
                         return alertDialog;
                     }
                 };
@@ -361,8 +467,7 @@ public class Dialogs {
      * @param activity
      *            the enclosing activity
      */
-    private static void
-            setError(EditText input, int errorID, Activity activity) {
+    private static void setError(EditText input, int errorID, Activity activity) {
         String errorMsg = activity.getResources().getString(errorID);
         if (Build.VERSION.SDK_INT < 11) {
             ForegroundColorSpan fgcspan = new ForegroundColorSpan(Color.BLACK);
@@ -392,22 +497,23 @@ public class Dialogs {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
-                    AlertDialog.Builder builder = getBuilder(activity)
-                        .setMessage(
-                            getResources().getString(
-                                    R.string.remove_outbound_paired_message,
-                                    outboundDevice.type))
-                        .setPositiveButton(
-                            android.R.string.ok, new OnClickListener() {
+				AlertDialog.Builder builder = getBuilder(activity)
+						.setMessage(
+								getResources()
+										.getString(
+												R.string.remove_outbound_paired_message,
+												outboundDevice.type))
+						.setPositiveButton(android.R.string.ok,
+								new OnClickListener() {
 
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                        int which) {
-                                    activity.deleteOutboundDevice();
-                                }
-                            })
-                        .setNegativeButton(android.R.string.cancel, null);
-                    // @formatter:on
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										activity.deleteOutboundDevice();
+									}
+								})
+						.setNegativeButton(android.R.string.cancel, null);
+				// @formatter:on
                 return builder.create();
             }
         }.show(activity.getSupportFragmentManager(), "removeInbound");
@@ -468,22 +574,22 @@ public class Dialogs {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
-                AlertDialog.Builder builder = getBuilder(activity)
-                    .setMessage(
-                        getResources().getString(
-                                R.string.remove_inbound_paired_message,
-                                deviceToBeUnpaired.name))
-                    .setPositiveButton(
-                        android.R.string.ok, new OnClickListener() {
+				AlertDialog.Builder builder = getBuilder(activity)
+						.setMessage(
+								getResources().getString(
+										R.string.remove_inbound_paired_message,
+										deviceToBeUnpaired.name))
+						.setPositiveButton(android.R.string.ok,
+								new OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                activity.removePaired();
-                            }
-                        })
-                    .setNegativeButton(android.R.string.cancel, null);
-                // @formatter:on
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										activity.removePaired();
+									}
+								})
+						.setNegativeButton(android.R.string.cancel, null);
+				// @formatter:on
                 return builder.create();
             }
         }.show(activity.getSupportFragmentManager(), "removeInbound");
@@ -503,21 +609,21 @@ public class Dialogs {
         new PatchedDialogFragment() {
             public Dialog onCreateDialog(Bundle savedInstanceState) {
                 // @formatter:off
-                AlertDialog.Builder builder = getBuilder(activity)
-                    .setMessage(
-                        getResources().getString(
-                                R.string.delete_all_inbound_confirm))
-                    .setPositiveButton(
-                        android.R.string.ok, new OnClickListener() {
+				AlertDialog.Builder builder = getBuilder(activity)
+						.setMessage(
+								getResources().getString(
+										R.string.delete_all_inbound_confirm))
+						.setPositiveButton(android.R.string.ok,
+								new OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-                                activity.deleteAllInbound();
-                            }
-                        })
-                    .setNegativeButton(android.R.string.cancel, null);
-                // @formatter:on
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										activity.deleteAllInbound();
+									}
+								})
+						.setNegativeButton(android.R.string.cancel, null);
+				// @formatter:on
                 return builder.create();
             }
         }.show(activity.getSupportFragmentManager(), "removeAllInbound");
@@ -597,34 +703,50 @@ public class Dialogs {
     public static void whatsappMissing(final SendToWhatsappActivity activity,
             final Intent intent) {
         // @formatter:off
-        DialogFragment dialog = new PatchedDialogFragment() {
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = getNoUiBuilder(activity)
-                .setTitle(activity.getString(R.string.whatsapp_not_installed_title))
-                .setMessage(activity.getString(R.string.whatsapp_not_installed))
-                .setPositiveButton(activity.getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        activity.startActivity(SendToAppActivity.createPlainIntent(intent.getStringExtra("message")));
-                    }
-                })
-                .setNegativeButton(activity.getString(R.string.whatsapp_not_installed_dont_mind), new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        SharedPreferences pref = activity.getSharedPreferences("it.mb.whatshare", Context.MODE_PRIVATE);
-                        pref.edit().putBoolean(SendToWhatsappActivity.HIDE_MISSING_WHATSAPP_KEY, true).commit();
-                        activity.startActivity(SendToAppActivity.createPlainIntent(intent.getStringExtra("message")));
-                    }
-                });
-                Dialog dialog = builder.create();
-                dialog.setCanceledOnTouchOutside(false);
-                return dialog;
-            }
-        };
-        dialog.show(activity.getSupportFragmentManager(), "whatsapp_missing");
-        // @formatter:on
+		DialogFragment dialog = new PatchedDialogFragment() {
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				AlertDialog.Builder builder = getNoUiBuilder(activity)
+						.setTitle(
+								activity.getString(R.string.whatsapp_not_installed_title))
+						.setMessage(
+								activity.getString(R.string.whatsapp_not_installed))
+						.setPositiveButton(
+								activity.getString(android.R.string.ok),
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										activity.startActivity(SendToAppActivity.createPlainIntent(intent
+												.getStringExtra("message")));
+									}
+								})
+						.setNegativeButton(
+								activity.getString(R.string.whatsapp_not_installed_dont_mind),
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										SharedPreferences pref = activity
+												.getSharedPreferences(
+														"it.mb.whatshare",
+														Context.MODE_PRIVATE);
+										pref.edit()
+												.putBoolean(
+														SendToWhatsappActivity.HIDE_MISSING_WHATSAPP_KEY,
+														true).commit();
+										activity.startActivity(SendToAppActivity.createPlainIntent(intent
+												.getStringExtra("message")));
+									}
+								});
+				Dialog dialog = builder.create();
+				dialog.setCanceledOnTouchOutside(false);
+				return dialog;
+			}
+		};
+		dialog.show(activity.getSupportFragmentManager(), "whatsapp_missing");
+		// @formatter:on
     }
 
     /**
@@ -674,7 +796,8 @@ public class Dialogs {
             buildDate = SimpleDateFormat.getInstance().format(
                     new java.util.Date(time));
 
-        } catch (Exception e) {} finally {
+        } catch (Exception e) {
+        } finally {
             if (zf != null) {
                 try {
                     zf.close();

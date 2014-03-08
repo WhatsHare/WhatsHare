@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--
  * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> 
  *
@@ -15,10 +15,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * WhatsHare. If not, see <http://www.gnu.org/licenses/>.
--->
-
-<resources>
-
+--><resources>
     <!-- ZXING strings -->
     <string name="app_name">WhatsHare</string>
     <string name="app_picker_name">Applications</string>
@@ -101,7 +98,7 @@
     <string name="preferences_bulk_mode_summary">Scan and save many barcodes continuously</string>
     <string name="preferences_bulk_mode_title">Bulk scan mode</string>
     <string name="preferences_copy_to_clipboard_title">Copy to clipboard</string>
-    <string name="preferences_custom_product_search_summary" formatted="false">Substitutions: %s = contents, %f = format, %t = type</string>
+    <string formatted="false" name="preferences_custom_product_search_summary">Substitutions: %s = contents, %f = format, %t = type</string>
     <string name="preferences_custom_product_search_title">Custom search URL</string>
     <string name="preferences_decode_1D_title">1D barcodes</string>
     <string name="preferences_decode_Data_Matrix_title">Data Matrix</string>
@@ -142,8 +139,6 @@
     <string name="wifi_ssid_label">Network Name</string>
     <string name="wifi_type_label">Type</string>
     <!-- END ZXING strings -->
-    
-    
     <string name="whatshare">WhatsHare</string>
     <string name="qr_code_fail">The QR code is invalid; are you sure that you\'re taking a picture at the right display?</string>
     <string name="qr_code_retry">Try again</string>
@@ -151,8 +146,8 @@
     <string name="qr_input_submit">Submit</string>
     <string name="qr_desc">A pairing QR code</string>
     <string name="please_wait">Please wait</string>
-    <string name="wait_registration">Registering app for first use&#8230;</string>
-    <string name="wait_message">Generating unique code for pairing this device&#8230;</string>
+    <string name="wait_registration">Registering app for first use…</string>
+    <string name="wait_message">Generating unique code for pairing this device…</string>
     <string name="code_dialog">Type this code on the other device or in the Chrome Extension\'s text field:</string>
     <string name="code_dialog_reminder">Code is case-sensitive (upper/lower case does matter!)</string>
     <string name="code_dialog_fail">Couldn\'t generate an ID for this device using the QR code.\n\nGoogle servers may be under heavy load, please wait a couple of seconds and try again.</string>
@@ -174,23 +169,21 @@
     <string name="selection">selection</string>
     <string name="link">link</string>
     <string name="unpair">Unpair</string>
+    <string name="rename">Rename</string>
     <string name="remove_inbound_paired_message">Remove %1$s from the list of paired devices?\n\nThis will make WhatsHare ignore all messages coming from %1$s</string>
     <string name="remove_outbound_paired_message">Unpair %1$s?\n\nYou won\'t be able to share content using %1$s\'s WhatsHare until you pair it again</string>
     <string name="delete_file_saved_inbound">Delete all inbound pairings</string>
     <string name="delete_all_inbound_confirm">Remove all paired devices?\n\nThis will make WhatsHare ignore all incoming messages until you pair some new device</string>
     <string name="delete_all_inbound_notification">All devices unpaired</string>
     <string name="delete_all_inbound_fail_notification">Couldn\'t unpair devices</string>
-    <string name="device_id_chooser_title">Choose an ID for the device</string>
     <string name="at_least_one_char">must be at least 1 character long</string>
     <string name="wrong_char">max 30 chars, digits, letters, \'-\', \'_\' or whitespaces only</string>
     <string name="id_already_in_use">ID already in use</string>
     <string name="device_paired">Device added%s</string>
-
     <plurals name="added_device">
-        <item quantity="one"></item>
+        <item quantity="one"/>
         <item quantity="other">\ (%d paired total)</item>
     </plurals>
-
     <string name="add_device">Add new device</string>
     <string name="gcm_registration_error">Couldn\'t register WhatsHare with Google Cloud Messaging platform: %s</string>
     <string name="account_missing">\ you need to setup a Google account for this device in order to use this app.</string>
@@ -209,7 +202,7 @@
     <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
     <string name="tell_friends">Tell friends about WhatsHare</string>
     <string name="email_subject">Check this app out!</string>
-    <string name="email_body">WhatsHare is a free app for Android and Chrome that lets you share text and links between your Android devices, and from your browser to your Android devices!&lt;p>You can get it from:&lt;br>* &lt;a href=\"https://play.google.com/store/apps/details?id=it.mb.whatshare\">the Google Play Store&lt;/a> (for the Android app)&lt;br>* &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\">the Chrome Web Store&lt;/a> (for the Chrome app)&lt;p>Cheers!</string>
+    <string name="email_body">WhatsHare is a free app for Android and Chrome that lets you share text and links between your Android devices, and from your browser to your Android devices!&amp;lt;p&amp;gt;You can get it from:&amp;lt;br&amp;gt;* &amp;lt;a href=\"https://play.google.com/store/apps/details?id=it.mb.whatshare\"&amp;gt;the Google Play Store&amp;lt;/a&amp;gt; (for the Android app)&amp;lt;br&amp;gt;* &amp;lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\"&amp;gt;the Chrome Web Store&amp;lt;/a&amp;gt; (for the Chrome app)&amp;lt;p&amp;gt;Cheers!</string>
     <string name="email_intent_msg">Send email with</string>
-
+    <string name="device_name_chooser_title">Choose an ID for the device</string>
 </resources>

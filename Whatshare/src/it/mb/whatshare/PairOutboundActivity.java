@@ -97,7 +97,7 @@ public class PairOutboundActivity extends FragmentActivity {
     private class CallGooGlOutbound extends AsyncTask<String, Void, Void> {
 
         private ProgressDialog dialog;
-        private Pair<PairedDevice, String> pairedPair;
+        private PairedDevice paired;
 
         /*
          * (non-Javadoc)
@@ -120,7 +120,7 @@ public class PairOutboundActivity extends FragmentActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             dialog.dismiss();
-            Dialogs.onPairingOutbound(pairedPair, PairOutboundActivity.this);
+            Dialogs.onPairingOutbound(paired, PairOutboundActivity.this);
         }
 
         /*
@@ -130,11 +130,11 @@ public class PairOutboundActivity extends FragmentActivity {
          */
         @Override
         protected Void doInBackground(String... params) {
-            pairedPair = expand(params[0]);
+            paired = expand(params[0]);
             return null;
         }
 
-        private Pair<PairedDevice, String> expand(String url) {
+        private PairedDevice expand(String url) {
             HttpGet get = new HttpGet(String.format(
                     EXPANDER_URL,
                     PairOutboundActivity.this.getResources().getString(
@@ -158,10 +158,8 @@ public class PairOutboundActivity extends FragmentActivity {
                     if (checksum(domain, sum)) {
                         Utils.debug("Checksum ok!");
                         tracker.sendEvent("googl", "parse_expanded", "ok", 0L);
-                        return new Pair<PairedDevice, String>(
-                                new PairedDevice(decodeId(id),
-                                        URLDecoder.decode(model, "UTF-8")),
-                                decodeId(assignedID));
+                        return new PairedDevice(decodeId(assignedID),
+                                decodeId(id), URLDecoder.decode(model, "UTF-8"));
                     } else {
                         tracker.sendEvent("googl", "parse_expanded",
                                 "bad_checksum", 0L);
@@ -243,17 +241,6 @@ public class PairOutboundActivity extends FragmentActivity {
             }
         }
         return assignedID;
-    }
-
-    /**
-     * Sets the ID (name) chosen by the user for the device that is currently
-     * being paired as the outbound device.
-     * 
-     * @param assignedID
-     *            the user-chosen device ID (human readable name)
-     */
-    static void setAssignedID(String assignedID) {
-        PairOutboundActivity.assignedID = assignedID;
     }
 
     /*
@@ -424,8 +411,8 @@ public class PairOutboundActivity extends FragmentActivity {
      * @throws JSONException
      *             in case something is wrong with the argument <tt>device</tt>
      */
-    public static void savePairing(Pair<PairedDevice, String> device,
-            Context context) throws IOException, JSONException {
+    public static void savePairing(PairedDevice device, Context context)
+            throws IOException, JSONException {
         if (device == null) {
             Utils.debug("deleting outbound device... %s",
                     context.deleteFile(PAIRING_FILE_NAME) ? "success" : "fail");
@@ -434,9 +421,9 @@ public class PairOutboundActivity extends FragmentActivity {
                     Context.MODE_PRIVATE);
             // @formatter:off
         JSONObject json = new JSONObject()
-                                .put("name", device.first.name)
-                                .put("type", device.first.type)
-                                .put("assignedID", device.second);
+                                .put("name", device.name)
+                                .put("type", device.type)
+                                .put("assignedID", device.id);
         // @formatter:on
             PrintStream writer = new PrintStream(fos);
             writer.append(json.toString());

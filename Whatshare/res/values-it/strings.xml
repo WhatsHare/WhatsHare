@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
  * Copyright 2013 Michele Bonazza <emmepuntobi@gmail.com> 
  *
@@ -16,9 +15,7 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * WhatsHare. If not, see <http://www.gnu.org/licenses/>.
--->
-<resources>
-
+--><resources>
     <string name="whatshare">WhatsHare</string>
     <string name="app_picker_name">Applicazioni</string>
     <string name="bookmark_picker_name">Segnalibri</string>
@@ -100,7 +97,7 @@
     <string name="preferences_bulk_mode_summary">Scansiona e salva diversi codici a barre in sequenza</string>
     <string name="preferences_bulk_mode_title">Modalità scansione di gruppo</string>
     <string name="preferences_copy_to_clipboard_title">Copia negli appunti</string>
-    <string name="preferences_custom_product_search_summary" formatted="false">Sostituzioni: %s = contenuti, %f = formato, %t = tipo</string>
+    <string formatted="false" name="preferences_custom_product_search_summary">Sostituzioni: %s = contenuti, %f = formato, %t = tipo</string>
     <string name="preferences_custom_product_search_title">URL ricerca personalizzata</string>
     <string name="preferences_decode_1D_title">Codice a barre 1D</string>
     <string name="preferences_decode_Data_Matrix_title">Matrice dati</string>
@@ -140,14 +137,11 @@
     <string name="wifi_changing_network">Richiesta di connessione alla rete\u2026</string>
     <string name="wifi_ssid_label">Nome rete</string>
     <string name="wifi_type_label">Tipo</string>
-    
-    
-    
     <string name="qr_code_fail">QR code non valido; stai fotografando il QR code giusto?</string>
     <string name="qr_code_retry">Riprova</string>
     <string name="please_wait">Attendere</string>
-    <string name="wait_registration">Registro l\'applicazione per il primo utilizzo&#8230;</string>
-    <string name="wait_message">Generazione dell\'ID per la registrazione del dispositivo in corso&#8230;</string>
+    <string name="wait_registration">Registro l\'applicazione per il primo utilizzo…</string>
+    <string name="wait_message">Generazione dell\'ID per la registrazione del dispositivo in corso…</string>
     <string name="code_dialog">Inserisci questo codice nella schermata di configurazione di WhatsHare sull\'altro dispositivo/estensione per Chrome:</string>
     <string name="code_dialog_reminder">Fa\' attenzione alle maiuscole/minuscole!</string>
     <string name="code_dialog_fail">Impossibile generare un ID per questo dispositivo utilizzando il QR code fotografato.\n\nI server di Google potrebbero essere sovraccarichi, aspetta qualche secondo e riprova!</string>
@@ -171,23 +165,21 @@
     <string name="selection">Condivisa selezione</string>
     <string name="link">Condiviso link</string>
     <string name="unpair">Disassocia</string>
+    <string name="rename">Rinomina</string>
     <string name="remove_inbound_paired_message">Disassociare %1$s?\n\nWhatsHare ignorerà tutti i messaggi provenienti da %1$s</string>
     <string name="remove_outbound_paired_message">Disassociare %1$s?\n\nNon si potranno più condividere messaggi utilizzando WhatsHare installato su %1$s finché non verrà associato di nuovo</string>
     <string name="delete_file_saved_inbound">Rimuovi tutti i dispositivi in ingresso associati</string>
     <string name="delete_all_inbound_confirm">Disassociare tutti i dispositivi in ingresso?\n\nWhatsHare ignorerà tutti i messaggi in ingresso finché non verrà associato un nuovo dispositivo</string>
     <string name="delete_all_inbound_notification">Disassociati tutti i dispositivi</string>
     <string name="delete_all_inbound_fail_notification">Impossibile disassociare tutti i dispositivi</string>
-    <string name="device_id_chooser_title">Scegli un ID per il dispositivo</string>
     <string name="at_least_one_char">almeno 1 carattere</string>
     <string name="wrong_char">max 30 caratteri, solo lettere, cifre, \'-\', \'_\' o spazi</string>
     <string name="id_already_in_use">ID già in uso</string>
     <string name="device_paired">Dispositivo aggiunto%s</string>
-
     <plurals name="added_device">
-        <item quantity="one"></item>
+        <item quantity="one"/>
         <item quantity="other">\ (%d associati in totale)</item>
     </plurals>
-
     <string name="add_device">Aggiungi nuovo dispositivo</string>
     <string name="gcm_registration_error">Impossibile registrare WhatsHare con Google Cloud Messaging: %s</string>
     <string name="account_missing">\ devi impostare un account Google per questo dispositivo per poter utilizzare WhatsHare.</string>
@@ -208,6 +200,7 @@
     <string name="title_activity_send_to_whatsapp">WhatsHare\nWhatsApp</string>
     <string name="tell_friends">Suggerisci WhatsHare ai tuoi amici</string>
     <string name="email_subject">Prova quest\'app!</string>
-    <string name="email_body">WhatsHare è un\'app gratuita per Android e Chrome che ti permette di condividere link e testo fra i tuoi dispositivi Android e dal browser sul tuo computer ai dispositivi Android!&lt;p>La puoi scaricare:&lt;br>dal &lt;a href=\"https://play.google.com/store/apps/details?id=it.mb.whatshare\">Google Play Store&lt;/a> (per l\'app Android)&lt;br>dal &lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\">Chrome Web Store&lt;/a> (per l\'app Chrome)&lt;p>Ciao!</string>
+    <string name="email_body">WhatsHare è un\'app gratuita per Android e Chrome che ti permette di condividere link e testo fra i tuoi dispositivi Android e dal browser sul tuo computer ai dispositivi Android!&amp;lt;p&amp;gt;La puoi scaricare:&amp;lt;br&amp;gt;dal &amp;lt;a href=\"https://play.google.com/store/apps/details?id=it.mb.whatshare\"&amp;gt;Google Play Store&amp;lt;/a&amp;gt; (per l\'app Android)&amp;lt;br&amp;gt;dal &amp;lt;a href=\"https://chrome.google.com/webstore/detail/whatshare/mghncekchoedpbbpidmeohijjgjlpgib\"&amp;gt;Chrome Web Store&amp;lt;/a&amp;gt; (per l\'app Chrome)&amp;lt;p&amp;gt;Ciao!</string>
     <string name="email_intent_msg">Invia l\'email usando</string>
+    <string name="device_name_chooser_title">Scegli un ID per il dispositivo</string>
 </resources>

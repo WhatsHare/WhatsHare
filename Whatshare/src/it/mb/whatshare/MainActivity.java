@@ -105,15 +105,15 @@ public class MainActivity extends FragmentActivity {
      * @author Michele Bonazza
      */
     static class PairedDevice implements Serializable {
+
         /**
          * 
          */
         private static final long serialVersionUID = 7662420062946826108L;
         /**
-         * The name set for the device by the user, must be unique so it's used
-         * as this device's ID.
+         * The name set for the device by the user.
          */
-        final String name;
+        String name;
         /**
          * The device's type as specified by the device itself (e.g. 'Chrome
          * Whatshare Extension').
@@ -121,18 +121,34 @@ public class MainActivity extends FragmentActivity {
         final String type;
 
         /**
+         * The unique ID for the device
+         */
+        final String id;
+
+        /**
          * Creates a new device.
          * 
+         * @param ID
+         *            the ID for the device
          * @param name
-         *            the name set for the device by the user, must be unique so
-         *            it's used as this device's ID.
+         *            the name set for the device by the user
          * @param type
          *            the device's type as specified by the device itself (e.g.
          *            'Chrome Whatshare Extension')
          */
-        PairedDevice(String name, String type) {
+        PairedDevice(String ID, String name, String type) {
+            this.id = ID;
             this.name = name;
             this.type = type;
+        }
+
+        /**
+         * Returns a new value to be used as ID for a device.
+         * 
+         * @return an ID to be used to identify a device
+         */
+        static String getNextID() {
+            return String.valueOf(System.currentTimeMillis());
         }
 
         public String toString() {
@@ -140,24 +156,26 @@ public class MainActivity extends FragmentActivity {
                     .append(")").toString();
         }
 
-        /*
-         * (non-Javadoc)
+        /**
+         * Renames this device.
          * 
-         * @see java.lang.Object#hashCode()
+         * @param newName
+         *            the new name for this device
          */
+        public void rename(String newName) {
+            this.name = newName;
+        }
+
         @Override
         public int hashCode() {
             final int prime = 31;
             int result = 1;
+            result = prime * result + ((id == null) ? 0 : id.hashCode());
             result = prime * result + ((name == null) ? 0 : name.hashCode());
+            result = prime * result + ((type == null) ? 0 : type.hashCode());
             return result;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -167,13 +185,24 @@ public class MainActivity extends FragmentActivity {
             if (getClass() != obj.getClass())
                 return false;
             PairedDevice other = (PairedDevice) obj;
+            if (id == null) {
+                if (other.id != null)
+                    return false;
+            } else if (!id.equals(other.id))
+                return false;
             if (name == null) {
                 if (other.name != null)
                     return false;
             } else if (!name.equals(other.name))
                 return false;
+            if (type == null) {
+                if (other.type != null)
+                    return false;
+            } else if (!type.equals(other.type))
+                return false;
             return true;
         }
+
     }
 
     /**
@@ -191,13 +220,14 @@ public class MainActivity extends FragmentActivity {
     /**
      * The regex used to filter names chosen by the user for inbound devices.
      */
-    static final String VALID_DEVICE_ID = "[A-Za-z0-9\\-\\_\\s]{1,30}";
+    static final String VALID_DEVICE_NAME = "[A-Za-z0-9\\-\\_\\s]{1,30}";
     /**
      * The code used by {@link #onActivityResult(int, int, Intent)} to detect
      * incoming replies from the QR code capture activity.
      */
     static final int QR_CODE_SCANNED = 0;
-    private PairedDevice outboundDevice, deviceToBeUnpaired;
+
+    private PairedDevice outboundDevice, deviceSelectedContextMenu;
     private List<PairedDevice> inboundDevices = new ArrayList<PairedDevice>();
     private ArrayAdapter<String> adapter;
     private Tracker tracker;
@@ -212,10 +242,11 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
             ContextMenuInfo menuInfo) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu_devices, menu);
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(R.string.unpair);
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-        deviceToBeUnpaired = inboundDevices.get(info.position);
+        deviceSelectedContextMenu = inboundDevices.get(info.position);
     }
 
     /*
@@ -236,8 +267,16 @@ public class MainActivity extends FragmentActivity {
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        tracker.sendEvent("ui", "button_press", "unpair", 0L);
-        Dialogs.confirmUnpairInbound(deviceToBeUnpaired, this);
+        switch (item.getItemId()) {
+        case R.id.context_devices_rename:
+            tracker.sendEvent("ui", "button_press", "rename", 0L);
+            Dialogs.promptForNewDeviceName(deviceSelectedContextMenu, this);
+            break;
+        case R.id.context_devices_unpair:
+            tracker.sendEvent("ui", "button_press", "unpair", 0L);
+            Dialogs.confirmUnpairInbound(deviceSelectedContextMenu, this);
+            break;
+        }
         return super.onContextItemSelected(item);
     }
 
@@ -245,16 +284,33 @@ public class MainActivity extends FragmentActivity {
      * Removes the currently selected device from the list of inbound devices.
      */
     void removePaired() {
-        if (deviceToBeUnpaired != null) {
+        if (deviceSelectedContextMenu != null) {
             Utils.debug("removePaired(): removing %s... success? %s",
-                    deviceToBeUnpaired.name,
-                    inboundDevices.remove(deviceToBeUnpaired));
-            deviceToBeUnpaired = null;
+                    deviceSelectedContextMenu.name,
+                    inboundDevices.remove(deviceSelectedContextMenu));
+            deviceSelectedContextMenu = null;
             writePairedInboundFile(inboundDevices);
             BaseAdapter listAdapter = getListAdapter();
             listAdapter.notifyDataSetChanged();
         } else {
             Utils.debug("removePaired(): no device is currently set to be unpaired");
+        }
+    }
+
+    /**
+     * Renames the currently selected device.
+     */
+    void onSelectedDeviceRenamed() {
+        if (deviceSelectedContextMenu != null) {
+            Utils.debug("renamePaired(): renamed %s to %s",
+                    deviceSelectedContextMenu.type,
+                    deviceSelectedContextMenu.name);
+            deviceSelectedContextMenu = null;
+            writePairedInboundFile(inboundDevices);
+            BaseAdapter listAdapter = getListAdapter();
+            listAdapter.notifyDataSetChanged();
+        } else {
+            Utils.debug("renamePaired(): no device is currently set to be renamed");
         }
     }
 
@@ -279,12 +335,14 @@ public class MainActivity extends FragmentActivity {
                 e.printStackTrace();
             }
         }
+
         final TextView outboundView = (TextView) findViewById(R.id.outbound_device);
         if (outboundDevice != null) {
             outboundView.setText(outboundDevice.type);
         } else {
             outboundView.setText(R.string.no_device);
         }
+
         final boolean outboundConfigured = outboundDevice != null;
         outboundView.setOnLongClickListener(new OnLongClickListener() {
 
@@ -409,6 +467,7 @@ public class MainActivity extends FragmentActivity {
                 return;
             }
         }
+
         inboundDevices = new ArrayList<PairedDevice>();
         BaseAdapter listAdapter = getListAdapter();
         listAdapter.notifyDataSetChanged();
@@ -456,6 +515,7 @@ public class MainActivity extends FragmentActivity {
         analytics = GoogleAnalytics.getInstance(this);
         tracker = analytics.getTracker(getResources().getString(
                 R.string.ga_trackingId));
+
         Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread
                 .getDefaultUncaughtExceptionHandler();
         if (uncaughtExceptionHandler instanceof ExceptionReporter) {
@@ -463,6 +523,7 @@ public class MainActivity extends FragmentActivity {
             exceptionReporter
                     .setExceptionParser(new AnalyticsExceptionParser());
         }
+
         analytics.setDefaultTracker(tracker);
         // start the registration process if needed
         GCMIntentService.registerWithGCM(this);
@@ -518,19 +579,21 @@ public class MainActivity extends FragmentActivity {
      * android.content.Intent)
      */
     @Override
-    protected void
-            onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == QR_CODE_SCANNED) {
             if (resultCode == RESULT_OK) {
                 String result = data.getStringExtra("SCAN_RESULT");
                 try {
                     String[] keys = result.split(" ");
+
                     if (keys.length < SHARED_SECRET_SIZE)
                         throw new NumberFormatException();
+
                     int[] sharedSecret = new int[SHARED_SECRET_SIZE];
                     for (int i = 0; i < SHARED_SECRET_SIZE; i++) {
                         sharedSecret[i] = Integer.valueOf(keys[i]);
                     }
+
                     String space = "";
                     StringBuilder deviceName = new StringBuilder();
                     for (int i = SHARED_SECRET_SIZE; i < keys.length; i++) {
@@ -538,8 +601,9 @@ public class MainActivity extends FragmentActivity {
                         deviceName.append(keys[i]);
                         space = " ";
                     }
+
                     tracker.sendEvent("qr", "result", "scan_ok", 0L);
-                    Dialogs.promptForInboundID(deviceName.toString(),
+                    Dialogs.promptForInboundName(deviceName.toString(),
                             sharedSecret, this);
                 } catch (NumberFormatException e) {
                     tracker.sendEvent("qr", "result", "scan_fail", 0L);
@@ -557,14 +621,16 @@ public class MainActivity extends FragmentActivity {
      * @param deviceID
      *            the ID to be checked
      * @return <code>true</code> if <tt>deviceID</tt> is a non-empty string that
-     *         matches {@link #VALID_DEVICE_ID} and is not in use for any other
-     *         inbound device.
+     *         matches {@link #VALID_DEVICE_NAME} and is not in use for any
+     *         other inbound device.
      */
     public boolean isValidChoice(String deviceID) {
         if (deviceID == null || deviceID.isEmpty()
-                || !deviceID.matches(VALID_DEVICE_ID))
+                || !deviceID.matches(VALID_DEVICE_NAME))
             return false;
+
         int hashed = deviceID.hashCode();
+
         for (PairedDevice device : inboundDevices) {
             if (hashed == device.name.hashCode()) {
                 return false;
@@ -588,7 +654,7 @@ public class MainActivity extends FragmentActivity {
             Object read = ois.readObject();
             return (ArrayList<PairedDevice>) read;
         } catch (FileNotFoundException e) {
-            // it's ok, no inbound devices have been configured
+            // it's ok, no inbound device has been configured
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -630,9 +696,11 @@ public class MainActivity extends FragmentActivity {
         List<String> deviceNames = new ArrayList<String>();
         inboundDevices = loadInboundPairing();
         Utils.debug("%d device(s)", inboundDevices.size());
+
         for (PairedDevice device : inboundDevices) {
             deviceNames.add(device.name);
         }
+
         if (adapter == null) {
             adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, deviceNames);

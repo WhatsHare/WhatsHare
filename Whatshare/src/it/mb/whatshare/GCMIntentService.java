@@ -148,17 +148,19 @@ public class GCMIntentService extends GCMBaseIntentService {
         // if whitelist doesn't exist, don't bother
         long lastModified = whitelist.exists() ? whitelist.lastModified()
                 : Long.MIN_VALUE;
+
         if (lastCheckedWhitelist < lastModified) {
             FileInputStream fis = null;
             try {
                 fis = openFileInput(MainActivity.INBOUND_DEVICES_FILENAME);
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 Object read = ois.readObject();
+
                 @SuppressWarnings("unchecked")
                 List<PairedDevice> devices = (ArrayList<PairedDevice>) read;
                 senderWhitelist = new HashSet<String>();
                 for (PairedDevice device : devices) {
-                    senderWhitelist.add(String.valueOf(device.name.hashCode()));
+                    senderWhitelist.add(String.valueOf(device.id.hashCode()));
                 }
             } catch (FileNotFoundException e) {
                 // it's ok, no whitelist, all messages are rejected
@@ -237,6 +239,7 @@ public class GCMIntentService extends GCMBaseIntentService {
         Utils.debug("new incoming message from %s: %s", sender,
                 bundle.getString("message"));
         readWhitelist();
+
         if (senderWhitelist.contains(sender)) {
             String type = bundle.getString(MainActivity.INTENT_TYPE_EXTRA);
             if (type == null) {
@@ -244,6 +247,9 @@ public class GCMIntentService extends GCMBaseIntentService {
             }
             generateNotification(arg0, bundle.getString("message"),
                     MainActivity.SHARE_VIA_WHATSAPP_EXTRA.equals(type));
+        } else {
+            Utils.debug("ignoring message from %s, not in the whitelist",
+                    sender);
         }
     }
 
