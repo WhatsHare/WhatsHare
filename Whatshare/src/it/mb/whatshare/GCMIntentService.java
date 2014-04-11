@@ -160,7 +160,14 @@ public class GCMIntentService extends GCMBaseIntentService {
                 List<PairedDevice> devices = (ArrayList<PairedDevice>) read;
                 senderWhitelist = new HashSet<String>();
                 for (PairedDevice device : devices) {
-                    senderWhitelist.add(String.valueOf(device.id.hashCode()));
+                    try {
+                        senderWhitelist
+                                .add(String.valueOf(device.id.hashCode()));
+                    } catch (NullPointerException e) {
+                        // backward compatibility... devices didn't have an ID
+                        senderWhitelist.add(String.valueOf(device.name
+                                .hashCode()));
+                    }
                 }
             } catch (FileNotFoundException e) {
                 // it's ok, no whitelist, all messages are rejected
